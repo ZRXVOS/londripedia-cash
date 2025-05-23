@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LondriPediaCash</title>
-    <meta name="description" content="Aplikasi Pencatatan Keuangan Harian LondriPedia">
-    <meta name="theme-color" content="#2563eb">
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTG9uZHJpUGVkaWFDYXNoIiwic2hvcnRfbmFtZSI6IkxvbmRyaUNhc2giLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzI1NjNlYiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBMU1URWdOVEV5SWo0OGNtVmpkQ0I0UFNJeE1EWWlJSGs5SWpFd05pSWlJSGRwWkhSb1BTSXpNREFpSUdobGFXZG9kRDBpTXpBd0lpQm1hV3hzUFNJak1qVTJNMlZpSWk4K1BIUmxlSFFnZUQwaU1qVTJJaUI1UFNJeU5UWWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpSUdacGJHeDlJaU5tWm1abVptWWlJR1p2Ym5RdGMybDZaVDBpTkRCd2VDSStNamN5TW1aaVBDOTBaWGgwUGp3dmMzWm5QZz09Iiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB4PSIxMDYiIHk9IjEwNiIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMyNTYzZWIiLz48dGV4dCB4PSIyNTYiIHk9IjI1NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZmZmZiIgZm9udC1zaXplPSI0MHB4Ij4yNzIyZmI8L3RleHQ+PC9zdmc+">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,354 +13,59 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            line-height: 1.6;
+            color: #333;
         }
 
-        .app-container {
-            max-width: 480px;
+        .container {
+            max-width: 800px;
             margin: 0 auto;
-            min-height: 100vh;
-            background: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
         }
 
         .header {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white;
-            padding: 20px;
             text-align: center;
-            position: relative;
+            color: white;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header .subtitle {
+        .header p {
+            font-size: 1.1em;
             opacity: 0.9;
-            font-size: 14px;
         }
 
         .online-status {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 10px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            z-index: 1000;
         }
 
         .online-status.offline {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .readonly-input {
-            background: #f8fafc;
-            color: #6b7280;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            pointer-events: auto;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: #059669;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #047857;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-full {
-            width: 100%;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #0284c7;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0c4a6e;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #075985;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .transaction-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .transaction-info {
-            flex: 1;
-        }
-
-        .transaction-amount {
-            font-weight: bold;
-            color: #059669;
-        }
-
-        .transaction-details {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .transaction-status {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-validated {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-transferred {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .alert {
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #059669;
-        }
-
-        .alert-warning {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #f59e0b;
-        }
-
-        .alert-danger {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #dc2626;
-        }
-
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #2563eb;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .text-small {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .mt-2 {
-            margin-top: 8px;
-        }
-
-        .mb-4 {
-            margin-bottom: 16px;
-        }
-
-        .validation-section {
-            background: #fffbeb;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .validation-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #fde68a;
-        }
-
-        .validation-item:last-child {
-            border-bottom: none;
-        }
-
-        .validation-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .chart-placeholder {
-            height: 200px;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0369a1;
-            font-weight: 500;
-            border: 2px dashed #0284c7;
-            text-align: center;
-        }
-
-        .install-prompt {
-            background: #1e40af;
-            color: white;
-            padding: 12px 16px;
-            text-align: center;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .close-prompt {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 18px;
+            background: rgba(245, 158, 11, 0.9);
+            border: 2px solid rgba(245, 158, 11, 0.3);
         }
 
         .sync-indicator {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 6px 12px;
+            padding: 8px 15px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 500;
@@ -393,30 +92,412 @@
             animation: pulse 1s infinite;
         }
 
-        @media (max-width: 480px) {
-            .content {
-                padding: 15px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .sync-indicator {
-                bottom: 10px;
-                right: 10px;
-            }
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
         }
 
-        /* Loading animation */
+        .login-section {
+            text-align: center;
+        }
+
+        .login-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #4299e1;
+            position: relative;
+        }
+
+        .stat-card.green {
+            border-left-color: #48bb78;
+            background: linear-gradient(135deg, #f0fff4, #e6fffa);
+        }
+
+        .stat-card.orange {
+            border-left-color: #ed8936;
+            background: linear-gradient(135deg, #fffaf0, #fef5e7);
+        }
+
+        .stat-card.red {
+            border-left-color: #f56565;
+            background: linear-gradient(135deg, #fff5f5, #fed7d7);
+        }
+
+        .stat-card.critical {
+            border-left-color: #dc2626;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            animation: criticalAlert 2s infinite;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .critical-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc2626;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 1s infinite;
+        }
+
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-item.pending {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .transaction-item.validated {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .transaction-item.transferred {
+            border-left-color: #059669;
+            background: #d1fae5;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-amount {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+
+        .transaction-date {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .transaction-status {
+            font-size: 0.8em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-validated {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-transferred {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .transaction-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .date-range {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-range input {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .critical-alert {
+            background: linear-gradient(135deg, #feb2b2, #f56565);
+            color: white;
+            border: 3px solid #dc2626;
+            animation: criticalPulse 1.5s infinite;
+            font-weight: bold;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .time-display {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .money-helper {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .validation-section {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .validation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #fde68a;
+        }
+
+        .validation-item:last-child {
+            border-bottom: none;
+        }
+
+        .transfer-section {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .transfer-section.critical {
+            background: linear-gradient(135deg, #fecaca, #f87171);
+            border: 3px solid #dc2626;
+            animation: criticalAlert 2s infinite;
+        }
+
+        .transfer-ready {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border: 2px solid #059669;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .tab-button.active {
+            background: #4299e1;
+            color: white;
+        }
+
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #2563eb;
+            border-top: 3px solid #4299e1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+
+        .transfer-summary {
+            background: #f0f9ff;
+            border: 1px solid #0284c7;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .transfer-summary.critical {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            animation: criticalPulse 2s infinite;
+        }
+
+        .transfer-history-item {
+            background: #d1fae5;
+            border-left: 4px solid #059669;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .dashboard-toggle {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -429,218 +510,355 @@
             50% { opacity: 0.5; }
         }
 
-        /* PWA Install Animation */
-        @keyframes slideDown {
-            from { transform: translateY(-100%); }
-            to { transform: translateY(0); }
+        @keyframes criticalAlert {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
+            }
+            50% { 
+                transform: scale(1.02);
+                box-shadow: 0 0 25px rgba(220, 38, 38, 0.6);
+            }
         }
 
-        .install-prompt {
-            animation: slideDown 0.5s ease-out;
+        @keyframes criticalPulse {
+            0%, 100% { 
+                background: linear-gradient(135deg, #fecaca, #f87171);
+                box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+            }
+            50% { 
+                background: linear-gradient(135deg, #f87171, #dc2626);
+                box-shadow: 0 0 25px rgba(220, 38, 38, 0.7);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .date-range {
+                flex-direction: column;
+            }
+
+            .online-status {
+                top: 10px;
+                right: 10px;
+            }
+
+            .sync-indicator {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .transaction-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- PWA Install Prompt -->
-        <div id="installPrompt" class="install-prompt hidden">
-            📱 Install LondriPediaCash untuk akses lebih cepat!
-            <button class="close-prompt" onclick="closeInstallPrompt()">×</button>
+    <!-- Online Status Indicator -->
+    <div id="onlineStatus" class="online-status">Online</div>
+    
+    <!-- Sync Indicator -->
+    <div id="syncIndicator" class="sync-indicator sync-success hidden">
+        ☁️ Tersinkronisasi
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🧾 LondriPediaCash</h1>
+            <p>Aplikasi Keuangan Harian LondriPedia</p>
         </div>
 
-        <!-- Sync Indicator -->
-        <div id="syncIndicator" class="sync-indicator sync-success hidden">
-            ☁️ Tersinkronisasi
-        </div>
-
-        <!-- Login Screen -->
-        <div id="loginScreen">
-            <div class="header">
-                <div id="onlineStatus" class="online-status">Online</div>
-                <h1>🏪 LondriPediaCash</h1>
-                <p class="subtitle">Pencatatan Keuangan Harian LondriPedia</p>
-            </div>
-            <div class="content">
-                <div id="connectionAlert" class="alert alert-info">
-                    ☁️ <strong>Mode Online</strong> - Data tersimpan realtime di Google Sheets + backup lokal
+        <!-- Login Section -->
+        <div id="loginSection" class="card">
+            <div class="login-section">
+                <h2>Masukkan Kode Akses</h2>
+                <div class="form-group">
+                    <input type="password" id="accessCode" placeholder="Kode akses..." maxlength="5" autocomplete="off">
                 </div>
+                <button class="btn btn-primary btn-full" onclick="login()">
+                    <span id="loginSpinner" class="loading hidden"></span>
+                    MASUK
+                </button>
+            </div>
+        </div>
+
+        <!-- SPV/Kasir Section -->
+        <div id="kasirSection" class="hidden">
+            <div class="card">
+                <h2>📝 Input Pemasukan Harian</h2>
+                <div id="alertContainer"></div>
                 
-                <div class="card">
+                <form id="incomeForm">
                     <div class="form-group">
-                        <label class="form-label">Masukkan Kode Akses</label>
-                        <input type="password" id="accessCode" class="form-input" placeholder="Kode akses..." maxlength="5" autocomplete="off">
-                    </div>
-                    <button class="btn btn-primary btn-full" onclick="login()">
-                        <span id="loginSpinner" class="loading hidden"></span>
-                        MASUK
-                    </button>
-                    <div class="text-center text-small mt-2">
-                        <span id="storageStatus">Aplikasi siap digunakan - data aman tersimpan</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SPV Interface -->
-        <div id="spvScreen" class="hidden">
-            <div class="header">
-                <div id="spvOnlineStatus" class="online-status">Online</div>
-                <h1>📊 Input Transaksi</h1>
-                <p class="subtitle">SPV/Kasir - LondriPedia</p>
-            </div>
-            <div class="content">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="form-label">📅 Tanggal</label>
-                        <input type="text" id="spvDate" class="form-input readonly-input" readonly>
-                        <div class="text-small mt-2">
-                            🕐 Waktu: <span id="spvTime"></span> (otomatis)
-                        </div>
+                        <label>Tanggal</label>
+                        <input type="date" id="incomeDate" required readonly>
+                        <div class="time-display" id="currentTime"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">💰 Jumlah Uang Diterima <span style="color: #dc2626;">*</span></label>
-                        <input type="text" id="spvAmount" class="form-input" placeholder="contoh: 150000 atau 150.000">
+                        <label>Jumlah Uang Diterima</label>
+                        <input type="text" id="incomeAmount" placeholder="Contoh: 500000" required>
+                        <div class="money-helper" id="moneyHelper"></div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">📝 Catatan (opsional)</label>
-                        <input type="text" id="spvNote" class="form-input" placeholder="contoh: kas pagi" maxlength="100">
+                        <label>Catatan (Opsional)</label>
+                        <textarea id="incomeNote" rows="3" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
                     </div>
                     
-                    <button class="btn btn-primary btn-full" onclick="submitTransaction()">
+                    <button type="submit" class="btn btn-primary btn-full">
                         <span id="submitSpinner" class="loading hidden"></span>
-                        💾 SIMPAN KE GOOGLE SHEETS
+                        💾 Simpan Data
                     </button>
-                </div>
+                </form>
+            </div>
 
-                <div id="successAlert" class="alert alert-success hidden">
-                    ✅ Data berhasil tersimpan ke Google Sheets! Menunggu validasi Owner
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 16px;">📋 Input Hari Ini (5 Terakhir)</h3>
-                    <div id="todayTransactions" class="transaction-list">
-                        <div class="text-center text-small" style="padding: 20px;">
-                            Belum ada transaksi hari ini
-                        </div>
+            <!-- Riwayat Input Hari Ini -->
+            <div class="card">
+                <h3>📋 Riwayat Input Hari Ini (7 Terakhir)</h3>
+                <div id="todayHistory" class="transaction-list">
+                    <div style="text-align: center; color: #6c757d; padding: 20px;">
+                        Belum ada input hari ini
                     </div>
                 </div>
-
-                <div class="text-center mt-2">
-                    <button class="btn" style="background: #6b7280; color: white;" onclick="logout()">
-                        ← Kembali ke Login
-                    </button>
-                </div>
+            </div>
+            
+            <div class="card">
+                <button class="btn btn-warning btn-full" onclick="logout()">
+                    🚪 Keluar
+                </button>
             </div>
         </div>
 
-        <!-- Owner Dashboard -->
-        <div id="ownerScreen" class="hidden">
-            <div class="header">
-                <div id="ownerOnlineStatus" class="online-status">Online</div>
-                <h1>📊 Owner Dashboard</h1>
-                <p class="subtitle">LondriPediaCash - Monitoring Realtime</p>
+        <!-- Owner Section -->
+        <div id="ownerSection" class="hidden">
+            <!-- Dashboard Toggle -->
+            <div class="dashboard-toggle">
+                <h3 style="margin-bottom: 15px; color: #4a5568;">📊 Pilih Dashboard Monitoring</h3>
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="switchMainDashboard('real')" id="dashReal">💰 Uang Di Rekening (Real Money)</button>
+                    <button class="tab-button" onclick="switchMainDashboard('validated')" id="dashValidated">✅ Uang Tervalidasi (Pending Transfer)</button>
+                    <button class="tab-button" onclick="switchMainDashboard('both')" id="dashBoth">📈 Kedua Dashboard</button>
+                </div>
             </div>
-            <div class="content">
-                <!-- Summary Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="todayTotal">Rp 0</div>
-                        <div class="stat-label">Hari Ini</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="weekTotal">Rp 0</div>
-                        <div class="stat-label">Minggu Ini</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="monthTotal">Rp 0</div>
-                        <div class="stat-label">Bulan Ini</div>
-                    </div>
-                </div>
 
-                <!-- Pending Transfer Alert -->
-                <div id="pendingAlert" class="alert alert-warning hidden">
-                    ⚠️ <strong>BELUM DITRANSFER KE REKENING:</strong> 
-                    <div style="margin-top: 8px;">
-                        <span id="pendingAmount" style="font-size: 18px; font-weight: bold;">Rp 0</span> 
-                        (<span id="pendingCount">0</span> transaksi)
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <button id="transferButton" class="btn btn-success" onclick="handleTransferAll()" style="pointer-events: auto; cursor: pointer;">
-                            <span id="transferSpinner" class="loading hidden"></span>
-                            💸 SUDAH DITRANSFER KE REKENING
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Transfer History Summary -->
-                <div id="transferHistorySummary" class="card">
-                    <h3 style="margin-bottom: 16px; color: #059669;">💰 RIWAYAT TRANSFER KE REKENING</h3>
-                    <div id="transferHistoryList" class="transaction-list" style="max-height: 200px;">
-                        <div class="text-center text-small" style="padding: 20px;">
-                            Belum ada riwayat transfer
+            <!-- Real Money Dashboard -->
+            <div id="realMoneyDashboard">
+                <div class="card">
+                    <h2>💰 Keuangan Masuk Rekening (Real Money)</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card green">
+                            <div class="stat-value" id="todayTransferred">Rp 0</div>
+                            <div class="stat-label">Hari Ini (Di Rekening)</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="weekTransferred">Rp 0</div>
+                            <div class="stat-label">Minggu Ini (Di Rekening)</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="monthTransferred">Rp 0</div>
+                            <div class="stat-label">Bulan Ini (Di Rekening)</div>
+                        </div>
+                        <div class="stat-card orange" id="pendingTransferCard">
+                            <div class="stat-value" id="pendingTransferAmount">Rp 0</div>
+                            <div class="stat-label">Belum Di Rekening</div>
+                            <div id="criticalBadge" class="critical-badge hidden">!</div>
                         </div>
                     </div>
-                    <div style="margin-top: 12px; text-align: center;">
-                        <button class="btn btn-small" style="background: #059669; color: white;" onclick="toggleTransferHistory()">
-                            📋 <span id="transferHistoryToggle">Lihat Semua History</span>
-                        </button>
-                    </div>
                 </div>
+            </div>
 
-                <!-- Validation Section -->
-                <div id="validationSection" class="validation-section hidden">
-                    <h3 style="margin-bottom: 16px; color: #92400e;">✅ VALIDASI TRANSAKSI</h3>
-                    <div id="pendingTransactions"></div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="card chart-section">
-                    <h3 style="margin-bottom: 16px;">📈 Grafik & Laporan</h3>
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                        <button class="btn btn-primary btn-small" onclick="showChart('daily')">Harian</button>
-                        <button class="btn btn-small" style="background: #6b7280; color: white;" onclick="showChart('weekly')">Mingguan</button>
-                        <button class="btn btn-small" style="background: #6b7280; color: white;" onclick="showChart('monthly')">Bulanan</button>
-                        <button class="btn btn-small" style="background: #6b7280; color: white;" onclick="showChart('custom')">Custom</button>
-                        <button class="btn btn-small" style="background: #059669; color: white;" onclick="refreshFromSheets()">🔄 Refresh</button>
-                    </div>
-                    <div class="chart-placeholder">
-                        📊 GRAFIK TREN PEMASUKAN HARIAN<br>
-                        <small>(Data realtime dari Google Sheets)</small>
-                    </div>
-                </div>
-
-                <!-- Monitoring Tabs -->
+            <!-- Validated Money Dashboard -->
+            <div id="validatedMoneyDashboard" class="hidden">
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3>📋 Monitoring Transaksi</h3>
-                    </div>
-                    
-                    <!-- Tab Navigation -->
-                    <div style="display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap;">
-                        <button id="tabPending" class="btn btn-primary btn-small" onclick="switchTab('pending')">
-                            Pending Validasi (<span id="pendingValidationCount">0</span>)
-                        </button>
-                        <button id="tabNotTransferred" class="btn btn-small" style="background: #f59e0b; color: white;" onclick="switchTab('not-transferred')">
-                            Belum Transfer (<span id="notTransferredCount">0</span>)
-                        </button>
-                        <button id="tabTransferred" class="btn btn-small" style="background: #059669; color: white;" onclick="switchTab('transferred')">
-                            Sudah Transfer
-                        </button>
-                    </div>
-
-                    <!-- Tab Content -->
-                    <div id="tabContent" class="transaction-list" style="min-height: 200px;">
-                        <!-- Content will be loaded dynamically -->
+                    <h2>✅ Keuangan Tervalidasi (Belum Transfer)</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="todayValidated">Rp 0</div>
+                            <div class="stat-label">Hari Ini (Tervalidasi)</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="weekValidated">Rp 0</div>
+                            <div class="stat-label">Minggu Ini (Tervalidasi)</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="monthValidated">Rp 0</div>
+                            <div class="stat-label">Bulan Ini (Tervalidasi)</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="totalTransferredValidated">Rp 0</div>
+                            <div class="stat-label">Total Di Rekening</div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="text-center mt-2">
-                    <button class="btn" style="background: #6b7280; color: white;" onclick="logout()">
-                        ← Kembali ke Login
-                    </button>
+            <!-- Both Dashboard -->
+            <div id="bothDashboard" class="hidden">
+                <div class="card">
+                    <h2>📈 Dashboard Komprehensif</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card green">
+                            <div class="stat-value" id="bothRealMoney">Rp 0</div>
+                            <div class="stat-label">💰 Total Di Rekening</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="bothValidatedMoney">Rp 0</div>
+                            <div class="stat-label">✅ Total Tervalidasi</div>
+                        </div>
+                        <div class="stat-card red" id="bothPendingCard">
+                            <div class="stat-value" id="bothPendingMoney">Rp 0</div>
+                            <div class="stat-label">⏳ Belum Transfer</div>
+                            <div id="bothCriticalBadge" class="critical-badge hidden">!</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="bothTotalTransactions">0</div>
+                            <div class="stat-label">📋 Total Transaksi</div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- CRITICAL ALERT: Rp 5.000.000+ -->
+            <div id="criticalTransferAlert" class="alert critical-alert hidden">
+                <div style="flex: 1;">
+                    <div style="font-size: 1.3em; margin-bottom: 8px;">🚨 CRITICAL: UANG BELUM TRANSFER > Rp 5.000.000!</div>
+                    <div style="font-size: 1.1em;">
+                        Total Menumpuk: <span id="criticalAmount" style="font-size: 1.4em;">Rp 0</span> 
+                        dari <span id="criticalCount">0</span> transaksi
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn" style="background: white; color: #dc2626; font-weight: bold; font-size: 1.1em;" onclick="processTransferToBank()">
+                            🏦 SEGERA TRANSFER KE REKENING!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Overview -->
+            <div class="card">
+                <h3>📊 Status Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-card red">
+                        <div class="stat-value" id="pendingValidationCount">0</div>
+                        <div class="stat-label">Belum Validasi</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-value" id="validatedNotTransferredCount">0</div>
+                        <div class="stat-label">Validasi Belum Transfer</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-value" id="transferredCount">0</div>
+                        <div class="stat-label">Sudah Di Rekening</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Validation Section -->
+            <div id="validationSection" class="validation-section hidden">
+                <h3 style="margin-bottom: 16px; color: #92400e;">🔴 VALIDASI TRANSAKSI (BELUM DIVALIDASI)</h3>
+                <div id="pendingTransactions">
+                    <div style="text-align: center; color: #6c757d; padding: 20px;">
+                        Tidak ada transaksi yang perlu divalidasi
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Management Section -->
+            <div id="transferSection" class="transfer-section hidden">
+                <h3 style="margin-bottom: 16px; color: #92400e;">🟡 MANAJEMEN TRANSFER KE REKENING (FLEKSIBEL)</h3>
+                <div class="transfer-summary" id="transferSummary">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong>Siap Transfer (Kapan Saja):</strong>
+                        <span id="readyTransferAmount" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
+                    </div>
+                    <div style="font-size: 0.9em; color: #6b7280;">
+                        <span id="readyTransferCount">0</span> transaksi telah divalidasi dan siap ditransfer ke rekening (Transfer sesuka hati Owner)
+                    </div>
+                </div>
+                <div id="readyTransferList" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
+                    <!-- Ready to transfer transactions will be loaded here -->
+                </div>
+                <button class="btn btn-success btn-full" onclick="processTransferToBank()" style="font-size: 1.1em;">
+                    <span id="transferSpinner" class="loading hidden"></span>
+                    🏦 TRANSFER SEMUA KE REKENING (FLEKSIBEL)
+                </button>
+            </div>
+
+            <!-- Transfer History -->
+            <div class="card">
+                <h3>💚 Riwayat Transfer ke Rekening</h3>
+                <div style="font-size: 0.9em; color: #6b7280; margin-bottom: 15px;">
+                    History lengkap semua transfer yang pernah dilakukan ke rekening bank
+                </div>
+                <div id="transferHistoryList">
+                    <div style="text-align: center; color: #6c757d; padding: 20px;">
+                        Belum ada transfer ke rekening
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="card">
+                <h3>📈 Grafik Pemasukan</h3>
+                <div class="tab-buttons" style="margin-bottom: 15px;">
+                    <button class="tab-button active" onclick="switchChartMode('transferred')" id="chartTransferred">💰 Yang Sudah Di Rekening</button>
+                    <button class="tab-button" onclick="switchChartMode('validated')" id="chartValidated">✅ Yang Sudah Divalidasi</button>
+                </div>
+                <div class="date-range">
+                    <input type="date" id="chartStartDate">
+                    <input type="date" id="chartEndDate">
+                    <button class="btn btn-primary" onclick="updateChart()">Update Grafik</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Transaction Monitoring -->
+            <div class="card">
+                <h3>📋 Monitoring Semua Transaksi</h3>
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="showTransactionTab('all')" id="tabAll">Semua Status</button>
+                    <button class="tab-button" onclick="showTransactionTab('pending')" id="tabPending">Belum Validasi</button>
+                    <button class="tab-button" onclick="showTransactionTab('validated')" id="tabValidated">Belum Transfer</button>
+                    <button class="tab-button" onclick="showTransactionTab('transferred')" id="tabTransferred">Sudah Transfer</button>
+                </div>
+                <div id="transactionTabContent" class="transaction-list">
+                    <!-- Transaction content will be loaded here -->
+                </div>
+            </div>
+
+            <div class="card">
+                <button class="btn btn-warning btn-full" onclick="logout()">
+                    🚪 Keluar
+                </button>
             </div>
         </div>
     </div>
@@ -648,13 +866,14 @@
     <script>
         // Configuration - Google Sheets Integration
         const CONFIG = {
-           GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyyqvAcVsTeUkIrUKPWyXdfvQysgXvqh2bK3opsA8Pc2084LN1eYk7_IziN5Rs54BnUQA/exec',
+            GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbzZEIDbBtPBY9Ev7UkiXoWhXhCWbl8hNOtfZSo2cfuMQFNHRbqp7eDkhHkiuZZub9YDMw/exec', // Ganti dengan URL deployment Google Apps Script
             SYNC_ENABLED: true,
             API_TIMEOUT: 8000,
-            VERSION: '1.0-Online'
+            VERSION: '2.2-Perfect',
+            CRITICAL_AMOUNT_THRESHOLD: 5000000 // Rp 5.000.000 threshold
         };
 
-        // Enhanced DataStore with Google Sheets Integration
+        // Enhanced DataStore with Perfect Flexible Transfer Tracking
         class DataStore {
             constructor() {
                 try {
@@ -663,6 +882,11 @@
                     this.lastId = parseInt(localStorage.getItem('londripedia_last_id') || '0');
                     this.storageAvailable = true;
                     this.isOnline = navigator.onLine;
+                    
+                    // Load demo data if empty
+                    if (this.transactions.length === 0) {
+                        this.loadDemoData();
+                    }
                     
                     // Test Google Sheets connection
                     this.testConnection();
@@ -673,7 +897,49 @@
                     this.lastId = 0;
                     this.storageAvailable = false;
                     this.isOnline = false;
+                    this.loadDemoData();
                 }
+            }
+
+            loadDemoData() {
+                // Add demo data including some over Rp 5M threshold
+                const today = new Date();
+                const demoAmounts = [2500000, 1800000, 3200000, 4500000, 2200000, 1500000, 6000000, 800000];
+                
+                for (let i = 0; i < 8; i++) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    
+                    const transaction = {
+                        id: ++this.lastId,
+                        timestamp: date.toISOString(),
+                        date: date.toISOString().split('T')[0],
+                        amount: demoAmounts[i],
+                        note: i % 3 === 0 ? `Demo transaksi ${i + 1}` : '',
+                        inputBy: 'SPV',
+                        validated: i < 7, // 7 transactions validated
+                        transferred: i < 2, // Only 2 transactions transferred
+                        transferDate: i < 2 ? date.toISOString().split('T')[0] : null
+                    };
+                    
+                    this.transactions.push(transaction);
+                }
+                
+                // Add transfer history
+                if (this.transactions.filter(t => t.transferred).length > 0) {
+                    const transferredTransactions = this.transactions.filter(t => t.transferred);
+                    this.transferHistory.push({
+                        id: 1,
+                        date: today.toISOString().split('T')[0],
+                        count: transferredTransactions.length,
+                        total: transferredTransactions.reduce((sum, t) => sum + t.amount, 0),
+                        periodFrom: transferredTransactions[0].date,
+                        periodTo: transferredTransactions[transferredTransactions.length - 1].date,
+                        note: 'Demo transfer ke rekening'
+                    });
+                }
+                
+                this.save();
             }
 
             async testConnection() {
@@ -687,9 +953,14 @@
                     });
                     
                     if (response.ok) {
-                        this.isOnline = true;
-                        updateOnlineStatus(true);
-                        console.log('✅ Google Sheets connection established');
+                        const result = await response.json();
+                        if (result.success) {
+                            this.isOnline = true;
+                            updateOnlineStatus(true);
+                            console.log('✅ Google Sheets connection established');
+                        } else {
+                            throw new Error('API returned error');
+                        }
                     } else {
                         throw new Error('API not responding');
                     }
@@ -724,8 +995,8 @@
                     
                     const result = await response.json();
                     
-                    if (result.error) {
-                        throw new Error(result.error);
+                    if (!result.success) {
+                        throw new Error(result.message || 'API returned error');
                     }
                     
                     showSyncIndicator('success');
@@ -805,28 +1076,28 @@
                 }
             }
 
-            async transferAll() {
-                const pendingTransactions = this.transactions.filter(t => t.validated && !t.transferred);
-                if (pendingTransactions.length === 0) return null;
+            async transferToBank() {
+                const readyTransactions = this.transactions.filter(t => t.validated && !t.transferred);
+                if (readyTransactions.length === 0) return null;
 
                 const now = new Date();
                 const transferRecord = {
                     id: this.transferHistory.length + 1,
                     date: now.toISOString().split('T')[0],
-                    count: pendingTransactions.length,
-                    total: pendingTransactions.reduce((sum, t) => sum + t.amount, 0),
-                    periodFrom: pendingTransactions[0].date,
-                    periodTo: pendingTransactions[pendingTransactions.length - 1].date,
-                    note: 'Transfer ke rekening'
+                    count: readyTransactions.length,
+                    total: readyTransactions.reduce((sum, t) => sum + t.amount, 0),
+                    periodFrom: readyTransactions[readyTransactions.length - 1].date,
+                    periodTo: readyTransactions[0].date,
+                    note: 'Transfer fleksibel ke rekening bank'
                 };
 
-                // Mark ALL pending transactions as transferred
-                pendingTransactions.forEach(t => {
+                // Mark all ready transactions as transferred
+                readyTransactions.forEach(t => {
                     t.transferred = true;
                     t.transferDate = now.toISOString().split('T')[0];
                 });
 
-                this.transferHistory.push(transferRecord);
+                this.transferHistory.unshift(transferRecord);
                 this.save();
                 
                 // Sync to Google Sheets
@@ -834,59 +1105,113 @@
                     await this.syncToGoogleSheets('transfer_all', {});
                 }
                 
-                console.log('Transfer completed:', transferRecord);
                 return transferRecord;
             }
 
-            async getStatsFromSheets() {
-                if (!this.isOnline) return this.getStats();
-                
-                try {
-                    const result = await this.syncToGoogleSheets('get_stats', {});
-                    return result || this.getStats();
-                } catch (error) {
-                    return this.getStats();
-                }
-            }
-
+            // Get comprehensive stats with critical alert detection
             getStats() {
                 const today = new Date().toISOString().split('T')[0];
                 const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                 const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
+                // Transactions by status
+                const transferredTransactions = this.transactions.filter(t => t.transferred);
                 const validatedTransactions = this.transactions.filter(t => t.validated);
+                const validatedNotTransferred = this.transactions.filter(t => t.validated && !t.transferred);
+                const pendingValidation = this.transactions.filter(t => !t.validated);
+
+                // Calculate amounts
+                const pendingTransferAmount = validatedNotTransferred.reduce((sum, t) => sum + t.amount, 0);
+                const isCritical = pendingTransferAmount >= CONFIG.CRITICAL_AMOUNT_THRESHOLD;
 
                 return {
-                    today: validatedTransactions.filter(t => t.date === today).reduce((sum, t) => sum + t.amount, 0),
-                    week: validatedTransactions.filter(t => t.date >= weekAgo).reduce((sum, t) => sum + t.amount, 0),
-                    month: validatedTransactions.filter(t => t.date >= monthAgo).reduce((sum, t) => sum + t.amount, 0),
-                    pending: this.transactions.filter(t => t.validated && !t.transferred).reduce((sum, t) => sum + t.amount, 0),
-                    pendingCount: this.transactions.filter(t => t.validated && !t.transferred).length,
-                    unvalidatedCount: this.transactions.filter(t => !t.validated).length
+                    // Real money (already in bank account)
+                    todayTransferred: transferredTransactions.filter(t => t.transferDate === today).reduce((sum, t) => sum + t.amount, 0),
+                    weekTransferred: transferredTransactions.filter(t => t.transferDate >= weekAgo).reduce((sum, t) => sum + t.amount, 0),
+                    monthTransferred: transferredTransactions.filter(t => t.transferDate >= monthAgo).reduce((sum, t) => sum + t.amount, 0),
+                    
+                    // Validated money (includes both transferred and not transferred)
+                    todayValidated: validatedTransactions.filter(t => t.date === today).reduce((sum, t) => sum + t.amount, 0),
+                    weekValidated: validatedTransactions.filter(t => t.date >= weekAgo).reduce((sum, t) => sum + t.amount, 0),
+                    monthValidated: validatedTransactions.filter(t => t.date >= monthAgo).reduce((sum, t) => sum + t.amount, 0),
+                    
+                    // Pending amounts
+                    pendingTransferAmount: pendingTransferAmount,
+                    pendingTransferCount: validatedNotTransferred.length,
+                    isCritical: isCritical,
+                    
+                    // Counts for status overview
+                    pendingValidationCount: pendingValidation.length,
+                    validatedNotTransferredCount: validatedNotTransferred.length,
+                    transferredCount: transferredTransactions.length,
+                    
+                    // Total amounts
+                    totalValidated: validatedTransactions.reduce((sum, t) => sum + t.amount, 0),
+                    totalTransferred: transferredTransactions.reduce((sum, t) => sum + t.amount, 0),
+                    totalTransactions: this.transactions.length
                 };
             }
 
             getTodayTransactions() {
                 const today = new Date().toISOString().split('T')[0];
-                return this.transactions.filter(t => t.date === today).slice(-5);
+                return this.transactions.filter(t => t.date === today).slice(-7).reverse();
             }
 
             getPendingValidation() {
                 return this.transactions.filter(t => !t.validated);
             }
 
+            getReadyForTransfer() {
+                return this.transactions.filter(t => t.validated && !t.transferred);
+            }
+
             getAllTransactions() {
                 return [...this.transactions].reverse();
             }
+
+            getTransactionsByStatus(status) {
+                switch(status) {
+                    case 'pending':
+                        return this.transactions.filter(t => !t.validated).reverse();
+                    case 'validated':
+                        return this.transactions.filter(t => t.validated && !t.transferred).reverse();
+                    case 'transferred':
+                        return this.transactions.filter(t => t.transferred).reverse();
+                    default:
+                        return this.getAllTransactions();
+                }
+            }
+
+            getChartData(mode, startDate, endDate) {
+                let filteredTransactions;
+                
+                if (mode === 'transferred') {
+                    filteredTransactions = this.transactions.filter(t => 
+                        t.transferred && 
+                        t.transferDate >= startDate && 
+                        t.transferDate <= endDate
+                    );
+                } else {
+                    filteredTransactions = this.transactions.filter(t => 
+                        t.validated && 
+                        t.date >= startDate && 
+                        t.date <= endDate
+                    );
+                }
+
+                return filteredTransactions;
+            }
         }
 
-        // Global variables - ORIGINAL STRUCTURE
+        // Global variables
         let dataStore = new DataStore();
         let currentView = 'login';
-        let currentTab = 'pending';
-        let showFullTransferHistory = false;
+        let currentTransactionTab = 'all';
+        let currentMainDashboard = 'real';
+        let currentChartMode = 'transferred';
+        let incomeChart = null;
 
-        // Utility functions - ORIGINAL
+        // Utility functions
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -895,62 +1220,83 @@
             }).format(amount);
         }
 
-        function formatTime() {
-            return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        function formatCurrencyInput(amount) {
+            const formatter = new Intl.NumberFormat('id-ID');
+            return 'Rp' + formatter.format(amount) + ',00';
         }
 
-        function formatDate() {
-            return new Date().toLocaleDateString('id-ID', { 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
+        function numberToWords(num) {
+            const ones = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan'];
+            const tens = ['', '', 'Dua Puluh', 'Tiga Puluh', 'Empat Puluh', 'Lima Puluh', 'Enam Puluh', 'Tujuh Puluh', 'Delapan Puluh', 'Sembilan Puluh'];
+            const teens = ['Sepuluh', 'Sebelas', 'Dua Belas', 'Tiga Belas', 'Empat Belas', 'Lima Belas', 'Enam Belas', 'Tujuh Belas', 'Delapan Belas', 'Sembilan Belas'];
+
+            if (num === 0) return 'Nol';
+            if (num < 10) return ones[num];
+            if (num < 20) return teens[num - 10];
+            if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + ones[num % 10] : '');
+            if (num < 1000) {
+                const hundreds = Math.floor(num / 100);
+                const remainder = num % 100;
+                return (hundreds === 1 ? 'Seratus' : ones[hundreds] + ' Ratus') + (remainder !== 0 ? ' ' + numberToWords(remainder) : '');
+            }
+            if (num < 1000000) {
+                const thousands = Math.floor(num / 1000);
+                const remainder = num % 1000;
+                return (thousands === 1 ? 'Seribu' : numberToWords(thousands) + ' Ribu') + (remainder !== 0 ? ' ' + numberToWords(remainder) : '');
+            }
+            if (num < 1000000000) {
+                const millions = Math.floor(num / 1000000);
+                const remainder = num % 1000000;
+                return numberToWords(millions) + ' Juta' + (remainder !== 0 ? ' ' + numberToWords(remainder) : '');
+            }
+            return 'Angka terlalu besar';
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = `🕐 ${timeString}`;
+            }
         }
 
         function showScreen(screenId) {
-            document.querySelectorAll('#loginScreen, #spvScreen, #ownerScreen').forEach(screen => {
+            document.querySelectorAll('#loginSection, #kasirSection, #ownerSection').forEach(screen => {
                 screen.classList.add('hidden');
             });
             document.getElementById(screenId).classList.remove('hidden');
-            currentView = screenId.replace('Screen', '');
+            currentView = screenId.replace('Section', '');
         }
 
         function showAlert(message, type = 'success', duration = 3000) {
-            const alertElement = document.getElementById('successAlert');
-            alertElement.className = `alert alert-${type}`;
-            alertElement.innerHTML = message;
-            alertElement.classList.remove('hidden');
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : type === 'danger' ? 'alert-danger' : 'alert-info';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
             
             setTimeout(() => {
-                alertElement.classList.add('hidden');
+                alertContainer.innerHTML = '';
             }, duration);
         }
 
-        // NEW: Online Status & Sync Functions
+        // Online Status & Sync Functions
         function updateOnlineStatus(isOnline) {
-            const statusElements = document.querySelectorAll('[id$="OnlineStatus"], #onlineStatus');
-            const connectionAlert = document.getElementById('connectionAlert');
-            
-            statusElements.forEach(element => {
-                element.className = isOnline ? 'online-status' : 'online-status offline';
-                element.textContent = isOnline ? 'Online' : 'Offline';
-            });
-            
-            if (connectionAlert) {
-                if (isOnline) {
-                    connectionAlert.className = 'alert alert-info';
-                    connectionAlert.innerHTML = '☁️ <strong>Mode Online</strong> - Data tersimpan realtime di Google Sheets + backup lokal';
-                } else {
-                    connectionAlert.className = 'alert alert-warning';
-                    connectionAlert.innerHTML = '📱 <strong>Mode Offline</strong> - Data tersimpan lokal, akan disinkronkan saat online';
-                }
-            }
+            const statusElement = document.getElementById('onlineStatus');
+            statusElement.textContent = isOnline ? '☁️ Online' : '📱 Offline';
+            statusElement.className = isOnline ? 'online-status' : 'online-status offline';
         }
 
         function showSyncIndicator(status) {
             const indicator = document.getElementById('syncIndicator');
-            if (!indicator) return;
-            
             indicator.className = `sync-indicator sync-${status}`;
             
             switch(status) {
@@ -962,7 +1308,7 @@
                 case 'error':
                     indicator.innerHTML = '❌ Error sync';
                     indicator.classList.remove('hidden');
-                    setTimeout(() => indicator.classList.add('hidden'), 5000);
+                    setTimeout(() => indicator.classList.add('hidden'), 8000);
                     break;
                 case 'pending':
                     indicator.innerHTML = '⏳ Menyinkronkan...';
@@ -971,13 +1317,13 @@
             }
         }
 
-        // Login functionality - ORIGINAL
+        // Login functionality
         function login() {
             const code = document.getElementById('accessCode').value.trim();
             const spinner = document.getElementById('loginSpinner');
             
             if (!code) {
-                showAlert('Masukkan kode akses!', 'danger');
+                showAlert('Masukkan kode akses!', 'warning');
                 return;
             }
 
@@ -987,27 +1333,13 @@
                 spinner.classList.add('hidden');
                 
                 if (code === '1') {
-                    try {
-                        initSPVScreen();
-                        showScreen('spvScreen');
-                        showAlert('✅ Login berhasil sebagai SPV!', 'success');
-                    } catch (error) {
-                        showAlert('Error loading SPV screen', 'danger');
-                    }
+                    initKasirScreen();
+                    showScreen('kasirSection');
                 } else if (code === '08625') {
-                    try {
-                        initOwnerScreen();
-                        showScreen('ownerScreen');
-                        showAlert('✅ Login berhasil sebagai Owner!', 'success');
-                    } catch (error) {
-                        showAlert('Error loading Owner screen', 'danger');
-                        showScreen('ownerScreen');
-                        document.getElementById('todayTotal').textContent = 'Rp 0';
-                        document.getElementById('weekTotal').textContent = 'Rp 0';
-                        document.getElementById('monthTotal').textContent = 'Rp 0';
-                    }
+                    initOwnerScreen();
+                    showScreen('ownerSection');
                 } else {
-                    showAlert('Kode akses tidak valid!', 'danger');
+                    showAlert('Kode akses tidak valid!', 'warning');
                 }
                 
                 document.getElementById('accessCode').value = '';
@@ -1015,149 +1347,157 @@
         }
 
         function logout() {
-            showScreen('loginScreen');
-        }
-
-        // SPV Screen functions - ORIGINAL + Sync
-        function initSPVScreen() {
-            document.getElementById('spvDate').value = formatDate();
-            updateSPVTime();
-            loadTodayTransactions();
-            
-            setInterval(updateSPVTime, 60000);
-        }
-
-        function updateSPVTime() {
-            document.getElementById('spvTime').textContent = formatTime();
-        }
-
-        async function submitTransaction() {
-            const amountInput = document.getElementById('spvAmount');
-            const noteInput = document.getElementById('spvNote');
-            const spinner = document.getElementById('submitSpinner');
-            
-            const amountText = amountInput.value.replace(/[^0-9]/g, '');
-            const amount = parseInt(amountText);
-            const note = noteInput.value.trim();
-
-            if (!amount || amount <= 0) {
-                showAlert('Jumlah uang wajib diisi dengan benar!', 'danger');
-                return;
-            }
-
-            spinner.classList.remove('hidden');
-
-            try {
-                const transaction = await dataStore.addTransaction(amount, note);
-                
-                // Clear form
-                amountInput.value = '';
-                noteInput.value = '';
-                
-                // Show success
-                const syncText = dataStore.isOnline ? 'tersimpan ke Google Sheets' : 'tersimpan lokal (akan disinkronkan)';
-                showAlert(`✅ Data berhasil ${syncText}! Menunggu validasi Owner`);
-                
-                // Reload today's transactions
-                loadTodayTransactions();
-                
-            } catch (error) {
-                showAlert('❌ Error menyimpan data: ' + error.message, 'danger');
-            } finally {
-                spinner.classList.add('hidden');
+            showScreen('loginSection');
+            if (incomeChart) {
+                incomeChart.destroy();
+                incomeChart = null;
             }
         }
 
-        function loadTodayTransactions() {
-            const container = document.getElementById('todayTransactions');
+        // Kasir Screen functions (UNCHANGED)
+        function initKasirScreen() {
+            document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
+            updateTime();
+            loadTodayHistory();
+            
+            // Update time every second
+            setInterval(updateTime, 1000);
+        }
+
+        function loadTodayHistory() {
+            const container = document.getElementById('todayHistory');
             const transactions = dataStore.getTodayTransactions();
             
             if (transactions.length === 0) {
-                container.innerHTML = '<div class="text-center text-small" style="padding: 20px;">Belum ada transaksi hari ini</div>';
+                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada input hari ini</div>';
                 return;
             }
 
             container.innerHTML = transactions.map(t => `
-                <div class="transaction-item">
+                <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-details">${new Date(t.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})} - ${t.note}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})} - ${t.note || 'Tanpa catatan'}</div>
                     </div>
-                    <div class="transaction-status ${t.validated ? 'status-validated' : 'status-pending'}">
-                        ${t.validated ? '✅ Valid' : '⏳ Pending'}
+                    <div class="transaction-status ${!t.validated ? 'status-pending' : t.transferred ? 'status-transferred' : 'status-validated'}">
+                        ${!t.validated ? '🔴 Belum Valid' : t.transferred ? '🟢 Di Rekening' : '🟡 Belum Transfer'}
                     </div>
                 </div>
             `).join('');
         }
 
-        // Owner Screen functions - ORIGINAL + Sync
-        async function initOwnerScreen() {
-            try {
-                await updateOwnerStats();
-                loadPendingValidation();
-                
-                currentTab = 'pending';
-                switchTab('pending');
-                
-                // Auto-refresh from Google Sheets every 30 seconds
-                setInterval(async () => {
-                    if (currentView === 'owner') {
-                        await updateOwnerStats();
-                    }
-                }, 30000);
-                
-            } catch (error) {
-                console.error('Error in initOwnerScreen:', error);
-                document.getElementById('todayTotal').textContent = 'Rp 0';
-                document.getElementById('weekTotal').textContent = 'Rp 0';
-                document.getElementById('monthTotal').textContent = 'Rp 0';
-            }
+        // Owner Screen functions
+        function initOwnerScreen() {
+            updateOwnerDashboard();
+            showTransactionTab('all');
+            initChart();
+            
+            // Auto refresh every 30 seconds
+            setInterval(() => {
+                if (currentView === 'owner') {
+                    updateOwnerDashboard();
+                }
+            }, 30000);
         }
 
-        async function updateOwnerStats() {
-            try {
-                const stats = dataStore.isOnline ? 
-                    await dataStore.getStatsFromSheets() : 
-                    dataStore.getStats();
+        function switchMainDashboard(type) {
+            currentMainDashboard = type;
+            
+            // Update tab buttons
+            document.querySelectorAll('.dashboard-toggle .tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('dash' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+            
+            // Show/hide dashboards
+            document.getElementById('realMoneyDashboard').classList.toggle('hidden', type !== 'real' && type !== 'both');
+            document.getElementById('validatedMoneyDashboard').classList.toggle('hidden', type !== 'validated');
+            document.getElementById('bothDashboard').classList.toggle('hidden', type !== 'both');
+            
+            updateOwnerDashboard();
+        }
+
+        function updateOwnerDashboard() {
+            const stats = dataStore.getStats();
+            
+            // Update Real Money Dashboard
+            document.getElementById('todayTransferred').textContent = formatCurrency(stats.todayTransferred);
+            document.getElementById('weekTransferred').textContent = formatCurrency(stats.weekTransferred);
+            document.getElementById('monthTransferred').textContent = formatCurrency(stats.monthTransferred);
+            document.getElementById('pendingTransferAmount').textContent = formatCurrency(stats.pendingTransferAmount);
+            
+            // Update Validated Money Dashboard
+            document.getElementById('todayValidated').textContent = formatCurrency(stats.todayValidated);
+            document.getElementById('weekValidated').textContent = formatCurrency(stats.weekValidated);
+            document.getElementById('monthValidated').textContent = formatCurrency(stats.monthValidated);
+            document.getElementById('totalTransferredValidated').textContent = formatCurrency(stats.totalTransferred);
+            
+            // Update Both Dashboard
+            document.getElementById('bothRealMoney').textContent = formatCurrency(stats.totalTransferred);
+            document.getElementById('bothValidatedMoney').textContent = formatCurrency(stats.totalValidated);
+            document.getElementById('bothPendingMoney').textContent = formatCurrency(stats.pendingTransferAmount);
+            document.getElementById('bothTotalTransactions').textContent = stats.totalTransactions;
+            
+            // Update status overview
+            document.getElementById('pendingValidationCount').textContent = stats.pendingValidationCount;
+            document.getElementById('validatedNotTransferredCount').textContent = stats.validatedNotTransferredCount;
+            document.getElementById('transferredCount').textContent = stats.transferredCount;
+            
+            // Handle critical alerts (Rp 5M+)
+            const criticalAlert = document.getElementById('criticalTransferAlert');
+            const criticalBadge = document.getElementById('criticalBadge');
+            const bothCriticalBadge = document.getElementById('bothCriticalBadge');
+            const pendingCard = document.getElementById('pendingTransferCard');
+            const bothPendingCard = document.getElementById('bothPendingCard');
+            const transferSummary = document.getElementById('transferSummary');
+            const transferSection = document.getElementById('transferSection');
+            
+            if (stats.isCritical) {
+                // Show critical alert
+                document.getElementById('criticalAmount').textContent = formatCurrency(stats.pendingTransferAmount);
+                document.getElementById('criticalCount').textContent = stats.pendingTransferCount;
+                criticalAlert.classList.remove('hidden');
                 
-                // Update summary cards
-                document.getElementById('todayTotal').textContent = formatCurrency(stats.today);
-                document.getElementById('weekTotal').textContent = formatCurrency(stats.week);
-                document.getElementById('monthTotal').textContent = formatCurrency(stats.month);
+                // Add critical styling to cards
+                if (criticalBadge) criticalBadge.classList.remove('hidden');
+                if (bothCriticalBadge) bothCriticalBadge.classList.remove('hidden');
+                if (pendingCard) pendingCard.classList.add('critical');
+                if (bothPendingCard) bothPendingCard.classList.add('critical');
+                if (transferSummary) transferSummary.classList.add('critical');
+                if (transferSection) transferSection.classList.add('critical');
+            } else {
+                // Hide critical alert
+                criticalAlert.classList.add('hidden');
                 
-                // Update pending alert
-                const pendingAlert = document.getElementById('pendingAlert');
-                
-                if (stats.pending > 0) {
-                    document.getElementById('pendingAmount').textContent = formatCurrency(stats.pending);
-                    document.getElementById('pendingCount').textContent = stats.pendingCount;
-                    pendingAlert.classList.remove('hidden');
-                } else {
-                    pendingAlert.classList.add('hidden');
-                }
-                
-                // Update tab counters
-                document.getElementById('pendingValidationCount').textContent = stats.unvalidatedCount;
-                document.getElementById('notTransferredCount').textContent = stats.pendingCount;
-                
-                // Update validation section
-                const validationSection = document.getElementById('validationSection');
-                if (stats.unvalidatedCount > 0) {
-                    validationSection.classList.remove('hidden');
-                    loadPendingValidation();
-                } else {
-                    validationSection.classList.add('hidden');
-                }
-                
-                loadTransferHistorySummary();
-                
-                if (currentTab) {
-                    switchTab(currentTab);
-                }
-                
-            } catch (error) {
-                console.error('Error in updateOwnerStats:', error);
+                // Remove critical styling
+                if (criticalBadge) criticalBadge.classList.add('hidden');
+                if (bothCriticalBadge) bothCriticalBadge.classList.add('hidden');
+                if (pendingCard) pendingCard.classList.remove('critical');
+                if (bothPendingCard) bothPendingCard.classList.remove('critical');
+                if (transferSummary) transferSummary.classList.remove('critical');
+                if (transferSection) transferSection.classList.remove('critical');
             }
+            
+            // Show/hide validation section
+            const validationSection = document.getElementById('validationSection');
+            if (stats.pendingValidationCount > 0) {
+                validationSection.classList.remove('hidden');
+                loadPendingValidation();
+            } else {
+                validationSection.classList.add('hidden');
+            }
+            
+            // Show/hide transfer section
+            if (stats.validatedNotTransferredCount > 0) {
+                document.getElementById('transferSection').classList.remove('hidden');
+                loadReadyForTransfer();
+            } else {
+                document.getElementById('transferSection').classList.add('hidden');
+            }
+            
+            // Load transfer history
+            loadTransferHistory();
+            
+            // Refresh current tab
+            showTransactionTab(currentTransactionTab);
         }
 
         function loadPendingValidation() {
@@ -1165,7 +1505,7 @@
             const pendingTransactions = dataStore.getPendingValidation();
             
             if (pendingTransactions.length === 0) {
-                container.innerHTML = '<div class="text-center text-small" style="padding: 20px;">Tidak ada transaksi yang perlu divalidasi</div>';
+                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang perlu divalidasi</div>';
                 return;
             }
 
@@ -1173,9 +1513,9 @@
                 <div class="validation-item">
                     <div class="transaction-info">
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-details">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
                     </div>
-                    <div class="validation-buttons">
+                    <div class="transaction-actions">
                         <button class="btn btn-success btn-small" onclick="validateTransaction(${t.id})">
                             ✓ Validasi
                         </button>
@@ -1187,302 +1527,317 @@
             `).join('');
         }
 
+        function loadReadyForTransfer() {
+            const container = document.getElementById('readyTransferList');
+            const readyTransactions = dataStore.getReadyForTransfer();
+            
+            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+            document.getElementById('readyTransferAmount').textContent = formatCurrency(totalAmount);
+            document.getElementById('readyTransferCount').textContent = readyTransactions.length;
+            
+            if (readyTransactions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
+                return;
+            }
+
+            container.innerHTML = readyTransactions.reverse().map(t => `
+                <div class="transaction-item validated">
+                    <div class="transaction-info">
+                        <div class="transaction-amount">${formatCurrency(t.amount)}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                    </div>
+                    <div class="transaction-status status-validated">
+                        🟡 Siap Transfer
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadTransferHistory() {
+            const container = document.getElementById('transferHistoryList');
+            const history = dataStore.transferHistory;
+            
+            if (history.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transfer ke rekening</div>';
+                return;
+            }
+
+            container.innerHTML = history.map(h => `
+                <div class="transfer-history-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="color: #065f46;">Transfer #${h.id}</strong>
+                        <span style="font-size: 1.2em; font-weight: bold; color: #065f46;">${formatCurrency(h.total)}</span>
+                    </div>
+                    <div style="font-size: 0.9em; color: #059669;">
+                        📅 ${new Date(h.date).toLocaleDateString('id-ID')} • ${h.count} transaksi • ${h.note}
+                    </div>
+                    <div style="font-size: 0.8em; color: #6b7280; margin-top: 4px;">
+                        Periode: ${new Date(h.periodFrom).toLocaleDateString('id-ID')} - ${new Date(h.periodTo).toLocaleDateString('id-ID')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
         async function validateTransaction(id) {
             await dataStore.validateTransaction(id);
             showAlert('✅ Transaksi berhasil divalidasi!');
-            await updateOwnerStats();
+            updateOwnerDashboard();
         }
 
         async function deleteTransaction(id) {
             if (confirm('Yakin ingin menolak transaksi ini?')) {
                 await dataStore.deleteTransaction(id);
                 showAlert('❌ Transaksi berhasil ditolak!', 'warning');
-                await updateOwnerStats();
+                updateOwnerDashboard();
             }
         }
 
-        async function handleTransferAll() {
-            try {
-                const beforeTransfer = dataStore.transactions.filter(t => t.validated && !t.transferred);
-                
-                if (beforeTransfer.length === 0) {
-                    showAlert('Tidak ada transaksi yang perlu ditransfer!', 'warning');
-                    return;
-                }
+        async function processTransferToBank() {
+            const readyTransactions = dataStore.getReadyForTransfer();
+            
+            if (readyTransactions.length === 0) {
+                showAlert('Tidak ada transaksi yang siap untuk ditransfer!', 'warning');
+                return;
+            }
 
-                const totalAmount = beforeTransfer.reduce((sum, t) => sum + t.amount, 0);
-                const message = `Transfer ${beforeTransfer.length} transaksi ke rekening?\n\nTotal: ${formatCurrency(totalAmount)}`;
+            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+            const isCritical = totalAmount >= CONFIG.CRITICAL_AMOUNT_THRESHOLD;
+            
+            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
+            if (isCritical) {
+                message += '\n\n🚨 JUMLAH BESAR (>5 Juta) - Pastikan rekening siap!';
+            }
+            
+            if (confirm(message)) {
+                const spinner = document.getElementById('transferSpinner');
+                if (spinner) spinner.classList.remove('hidden');
                 
-                if (confirm(message)) {
-                    const transferButton = document.getElementById('transferButton');
-                    const spinner = document.getElementById('transferSpinner');
-                    
-                    transferButton.disabled = true;
-                    spinner.classList.remove('hidden');
-                    
-                    const transferRecord = await dataStore.transferAll();
+                try {
+                    const transferRecord = await dataStore.transferToBank();
                     
                     if (transferRecord) {
-                        showAlert(`💸 ${transferRecord.count} transaksi berhasil ditransfer ke rekening!`, 'success');
-                        await updateOwnerStats();
+                        const successMessage = isCritical ? 
+                            `🎉 SUKSES! Transfer besar ${formatCurrency(transferRecord.total)} dari ${transferRecord.count} transaksi berhasil masuk rekening!` :
+                            `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
+                        
+                        showAlert(successMessage, 'success', 6000);
+                        updateOwnerDashboard();
                     }
-                    
-                    transferButton.disabled = false;
-                    spinner.classList.add('hidden');
+                } catch (error) {
+                    showAlert('❌ Error saat proses transfer: ' + error.message, 'danger');
+                } finally {
+                    if (spinner) spinner.classList.add('hidden');
                 }
-                
-            } catch (error) {
-                showAlert('❌ Error processing transfer: ' + error.message, 'danger');
             }
         }
 
-        // ALL OTHER FUNCTIONS REMAIN EXACTLY THE SAME AS ORIGINAL
-
-        function loadTransferHistorySummary() {
-            const container = document.getElementById('transferHistoryList');
-            const history = dataStore.transferHistory.slice(-3);
+        function showTransactionTab(tabName) {
+            currentTransactionTab = tabName;
             
-            if (history.length === 0) {
-                container.innerHTML = '<div class="text-center text-small" style="padding: 20px;">Belum ada riwayat transfer</div>';
+            // Update tab buttons
+            document.querySelectorAll('#transactionTabContent').parent?.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+            
+            const container = document.getElementById('transactionTabContent');
+            const transactions = dataStore.getTransactionsByStatus(tabName);
+            
+            if (transactions.length === 0) {
+                const messages = {
+                    'all': 'Belum ada transaksi',
+                    'pending': 'Tidak ada transaksi yang belum divalidasi',
+                    'validated': 'Tidak ada transaksi yang belum ditransfer',
+                    'transferred': 'Tidak ada transaksi yang sudah ditransfer'
+                };
+                container.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 20px;">${messages[tabName]}</div>`;
                 return;
             }
 
-            const displayHistory = showFullTransferHistory ? dataStore.transferHistory.slice().reverse() : history.slice().reverse();
-            
-            container.innerHTML = displayHistory.map((h, index) => `
-                <div class="transaction-item" style="background: #d1fae5; border-left: 4px solid #059669;">
+            container.innerHTML = transactions.map(t => `
+                <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
-                        <div class="transaction-amount" style="color: #065f46;">${formatCurrency(h.total)}</div>
-                        <div class="transaction-details">
-                            ${new Date(h.date).toLocaleDateString('id-ID')} - ${h.count} transaksi - ${h.note}
-                        </div>
-                        <div class="transaction-details" style="font-size: 11px; color: #059669;">
-                            Transfer #${h.id} - ${h.periodFrom} sampai ${h.periodTo}
-                        </div>
+                        <div class="transaction-amount">${formatCurrency(t.amount)}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                        ${t.transferDate ? `<div style="font-size: 0.8em; color: #059669;">Transfer: ${new Date(t.transferDate).toLocaleDateString('id-ID')}</div>` : ''}
                     </div>
-                    <div class="transaction-status" style="background: #d1fae5; color: #065f46; border: 1px solid #059669;">
-                        ✅ Selesai
+                    <div class="transaction-status ${!t.validated ? 'status-pending' : t.transferred ? 'status-transferred' : 'status-validated'}">
+                        ${!t.validated ? '🔴 Belum Validasi' : t.transferred ? '🟢 Sudah Transfer' : '🟡 Belum Transfer'}
                     </div>
                 </div>
             `).join('');
         }
 
-        function toggleTransferHistory() {
-            showFullTransferHistory = !showFullTransferHistory;
-            const toggle = document.getElementById('transferHistoryToggle');
-            toggle.textContent = showFullTransferHistory ? 'Sembunyikan' : 'Lihat Semua History';
-            loadTransferHistorySummary();
+        function switchChartMode(mode) {
+            currentChartMode = mode;
+            
+            // Update tab buttons
+            document.getElementById('chartTransferred').classList.toggle('active', mode === 'transferred');
+            document.getElementById('chartValidated').classList.toggle('active', mode === 'validated');
+            
+            updateChart();
         }
 
-        function switchTab(tabName) {
-            currentTab = tabName;
+        function initChart() {
+            // Set default date range (last 30 days)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
             
-            const tabs = {
-                'tabPending': { name: 'pending', bg: '#dc2626' },
-                'tabNotTransferred': { name: 'not-transferred', bg: '#f59e0b' },
-                'tabTransferred': { name: 'transferred', bg: '#059669' }
+            document.getElementById('chartEndDate').value = endDate.toISOString().split('T')[0];
+            document.getElementById('chartStartDate').value = startDate.toISOString().split('T')[0];
+            
+            updateChart();
+        }
+
+        function updateChart() {
+            const startDate = document.getElementById('chartStartDate').value;
+            const endDate = document.getElementById('chartEndDate').value;
+            
+            const filteredTransactions = dataStore.getChartData(currentChartMode, startDate, endDate);
+
+            // Group by date
+            const dailyData = {};
+            filteredTransactions.forEach(t => {
+                const date = currentChartMode === 'transferred' ? t.transferDate : t.date;
+                if (!dailyData[date]) {
+                    dailyData[date] = 0;
+                }
+                dailyData[date] += t.amount;
+            });
+
+            const labels = Object.keys(dailyData).sort();
+            const data = labels.map(date => dailyData[date]);
+
+            const ctx = document.getElementById('incomeChart').getContext('2d');
+            
+            if (incomeChart) {
+                incomeChart.destroy();
+            }
+
+            const chartConfig = currentChartMode === 'transferred' ? {
+                label: 'Uang Di Rekening',
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.1)'
+            } : {
+                label: 'Uang Tervalidasi',
+                borderColor: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)'
             };
-            
-            Object.keys(tabs).forEach(tabId => {
-                const btn = document.getElementById(tabId);
-                if (btn) {
-                    if (tabs[tabId].name === tabName) {
-                        btn.style.background = tabs[tabId].bg;
-                        btn.style.color = 'white';
-                    } else {
-                        btn.style.background = '#6b7280';
-                        btn.style.color = 'white';
+
+            incomeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.map(date => new Date(date).toLocaleDateString('id-ID')),
+                    datasets: [{
+                        label: chartConfig.label,
+                        data: data,
+                        borderColor: chartConfig.borderColor,
+                        backgroundColor: chartConfig.backgroundColor,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: chartConfig.borderColor,
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
                     }
                 }
             });
-
-            const container = document.getElementById('tabContent');
-            
-            switch(tabName) {
-                case 'pending':
-                    loadTabPendingValidation(container);
-                    break;
-                case 'not-transferred':
-                    loadTabNotTransferred(container);
-                    break;
-                case 'transferred':
-                    loadTabTransferred(container);
-                    break;
-            }
         }
 
-        function loadTabPendingValidation(container) {
-            const pendingTransactions = dataStore.getPendingValidation();
-            
-            if (pendingTransactions.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-small" style="padding: 40px; color: #059669;">
-                        ✅ Tidak ada transaksi yang perlu divalidasi<br>
-                        <small>Semua transaksi sudah divalidasi</small>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = pendingTransactions.map(t => `
-                <div class="validation-item" style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="transaction-info">
-                            <div class="transaction-amount" style="color: #92400e;">${formatCurrency(t.amount)}</div>
-                            <div class="transaction-details" style="color: #92400e;">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                        </div>
-                        <div class="validation-buttons">
-                            <button class="btn btn-success btn-small" onclick="validateTransaction(${t.id})">
-                                ✓ Validasi
-                            </button>
-                            <button class="btn btn-danger btn-small" onclick="deleteTransaction(${t.id})">
-                                ❌ Tolak
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadTabNotTransferred(container) {
-            const notTransferred = dataStore.transactions.filter(t => t.validated && !t.transferred);
-            
-            if (notTransferred.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-small" style="padding: 40px; color: #059669;">
-                        ✅ Semua transaksi sudah ditransfer ke rekening<br>
-                        <small>Tidak ada yang perlu ditransfer</small>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = notTransferred.reverse().map(t => `
-                <div class="transaction-item" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
-                    <div class="transaction-info">
-                        <div class="transaction-amount" style="color: #92400e;">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-details">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                    </div>
-                    <div class="transaction-status" style="background: #fef3c7; color: #92400e; border: 1px solid #f59e0b;">
-                        ⏳ Belum Transfer
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadTabTransferred(container) {
-            const transferred = dataStore.transactions.filter(t => t.transferred);
-            
-            if (transferred.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-small" style="padding: 40px; color: #6b7280;">
-                        Belum ada transaksi yang ditransfer<br>
-                        <small>History transfer akan muncul di sini</small>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = transferred.reverse().map(t => `
-                <div class="transaction-item" style="background: #d1fae5; border-left: 4px solid #059669;">
-                    <div class="transaction-info">
-                        <div class="transaction-amount" style="color: #065f46;">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-details">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                        <div class="transaction-details" style="font-size: 11px; color: #059669;">Transfer: ${new Date(t.transferDate).toLocaleDateString('id-ID')}</div>
-                    </div>
-                    <div class="transaction-status" style="background: #d1fae5; color: #065f46; border: 1px solid #059669;">
-                        ✅ Sudah Transfer
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function showChart(period) {
-            document.querySelectorAll('.chart-section .btn-small').forEach(btn => {
-                if (!btn.onclick.toString().includes('refreshFromSheets')) {
-                    btn.style.background = '#6b7280';
-                    btn.style.color = 'white';
-                }
-            });
-            
-            event.target.style.background = '#2563eb';
-            
-            const chartMessages = {
-                daily: 'GRAFIK TREN PEMASUKAN HARIAN',
-                weekly: 'GRAFIK TREN PEMASUKAN MINGGUAN', 
-                monthly: 'GRAFIK TREN PEMASUKAN BULANAN',
-                custom: 'GRAFIK PERIODE CUSTOM'
-            };
-            
-            document.querySelector('.chart-placeholder').innerHTML = `
-                📊 ${chartMessages[period]}<br>
-                <small>(Data realtime dari Google Sheets)</small>
-            `;
-        }
-
-        async function refreshFromSheets() {
-            try {
-                await dataStore.testConnection();
-                await updateOwnerStats();
-                showAlert('🔄 Data berhasil direfresh dari Google Sheets!', 'info', 2000);
-            } catch (error) {
-                showAlert('❌ Gagal refresh dari Google Sheets', 'danger');
-            }
-        }
-
-        // PWA Installation - ORIGINAL
-        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-            window.addEventListener('load', () => {
-                const swData = `
-                    const CACHE_NAME = 'londripedia-cash-online-v1';
-                    const urlsToCache = ['/'];
-                    
-                    self.addEventListener('install', event => {
-                        event.waitUntil(
-                            caches.open(CACHE_NAME)
-                                .then(cache => cache.addAll(urlsToCache))
-                        );
-                    });
-                    
-                    self.addEventListener('fetch', event => {
-                        event.respondWith(
-                            caches.match(event.request)
-                                .then(response => response || fetch(event.request))
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swData], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(() => console.log('SW registered'))
-                    .catch(() => console.log('SW registration failed'));
-            });
-        }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            setTimeout(() => {
-                if (!window.matchMedia('(display-mode: standalone)').matches) {
-                    document.getElementById('installPrompt').classList.remove('hidden');
-                }
-            }, 3000);
-        });
-
-        function closeInstallPrompt() {
-            document.getElementById('installPrompt').classList.add('hidden');
-        }
-
-        // Initialize app - ORIGINAL + Online Status
+        // Form handling
         document.addEventListener('DOMContentLoaded', function() {
-            // Check storage availability and update status
-            if (!dataStore.storageAvailable) {
-                document.getElementById('storageStatus').innerHTML = '⚠️ Mode sementara - data tidak akan tersimpan';
-                document.getElementById('storageStatus').style.color = '#dc2626';
+            const incomeForm = document.getElementById('incomeForm');
+            if (incomeForm) {
+                incomeForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const amountInput = document.getElementById('incomeAmount');
+                    const noteInput = document.getElementById('incomeNote');
+                    const spinner = document.getElementById('submitSpinner');
+                    
+                    const amountText = amountInput.value.replace(/[^0-9]/g, '');
+                    const amount = parseInt(amountText);
+                    const note = noteInput.value.trim();
+
+                    if (!amount || amount <= 0) {
+                        showAlert('Jumlah uang wajib diisi dengan benar!', 'warning');
+                        return;
+                    }
+
+                    spinner.classList.remove('hidden');
+
+                    try {
+                        const transaction = await dataStore.addTransaction(amount, note);
+                        
+                        // Clear form
+                        amountInput.value = '';
+                        noteInput.value = '';
+                        document.getElementById('moneyHelper').textContent = '';
+                        
+                        // Show success
+                        const syncText = dataStore.isOnline ? 'tersimpan ke Google Sheets' : 'tersimpan lokal (akan disinkronkan)';
+                        showAlert(`✅ Data berhasil ${syncText}! Menunggu validasi Owner`);
+                        
+                        // Reload today's transactions
+                        loadTodayHistory();
+                        
+                    } catch (error) {
+                        showAlert('❌ Error menyimpan data: ' + error.message, 'danger');
+                    } finally {
+                        spinner.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Format currency input
+            const amountInput = document.getElementById('incomeAmount');
+            if (amountInput) {
+                amountInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    if (value) {
+                        const amount = parseInt(value);
+                        e.target.value = value;
+                        
+                        // Show formatted currency and words
+                        const formatted = formatCurrencyInput(amount);
+                        const words = numberToWords(amount);
+                        document.getElementById('moneyHelper').textContent = `${formatted} *(${words} Rupiah)*`;
+                    } else {
+                        document.getElementById('moneyHelper').textContent = '';
+                    }
+                });
+            }
+
+            // Enter key handling
+            const accessCode = document.getElementById('accessCode');
+            if (accessCode) {
+                accessCode.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        login();
+                    }
+                });
+                accessCode.focus();
             }
 
             // Monitor online/offline status
@@ -1494,40 +1849,9 @@
                 updateOnlineStatus(false);
             });
 
-            // Set up enter key handling for login
-            document.getElementById('accessCode').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    login();
-                }
-            });
-
-            // Set up enter key handling for SPV form
-            document.getElementById('spvAmount').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    document.getElementById('spvNote').focus();
-                }
-            });
-
-            document.getElementById('spvNote').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    submitTransaction();
-                }
-            });
-
-            // Currency formatting for amount input
-            document.getElementById('spvAmount').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/[^0-9]/g, '');
-                if (value) {
-                    const formatted = parseInt(value).toLocaleString('id-ID');
-                    e.target.value = formatted;
-                }
-            });
-
-            // Auto-focus on access code
-            document.getElementById('accessCode').focus();
-
-            console.log('🏪 LondriPediaCash Online ready!');
-            console.log('☁️ Google Sheets integration enabled');
+            console.log('🧾 LondriPediaCash Perfect System Ready!');
+            console.log('💰 Smart Rp 5M+ Alert System Enabled!');
+            console.log('📊 Dual Dashboard + Flexible Transfer Ready!');
         });
     </script>
 </body>
