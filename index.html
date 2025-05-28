@@ -866,7 +866,7 @@
     <script>
         // Configuration - Google Sheets Integration
         const CONFIG = {
-            GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbwiFKz_vpBfAkCp5Du5LcB_SwfhpMNY6KxIglLQqzkTcLMHjGjQ9P7L5P4gAfqD9O-M7w/exec', // Ganti dengan URL deployment Google Apps Script
+            GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyMk4RsCNdLnkILqed4AMN3WC3b6m1F-vlWw24jfvYOwj5OeTLqo0yN7yeK6xMS_t4Iaw/exec', // Ganti dengan URL deployment Google Apps Script
             SYNC_ENABLED: true,
             API_TIMEOUT: 8000,
             VERSION: '2.2-Perfect',
@@ -949,6 +949,7 @@
                     
                     const response = await fetch(CONFIG.GOOGLE_SHEETS_API_URL + '?action=health_check', {
                         method: 'GET',
+                        redirect: 'follow',
                         signal: controller.signal
                     });
                     
@@ -982,8 +983,9 @@
                     
                     const response = await fetch(CONFIG.GOOGLE_SHEETS_API_URL, {
                         method: 'POST',
+                        redirect: 'follow',
                         headers: {
-                            'Content-Type': 'application/json',
+                            "Content-Type": "text/plain;charset=utf-8",
                         },
                         body: JSON.stringify({ action, ...data }),
                         signal: controller.signal
