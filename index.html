@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LondriPediaCash</title>
+    <title>LondriPediaCash - Debug Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -40,6 +40,36 @@
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
+        }
+
+        .debug-panel {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #333;
+        }
+
+        .debug-panel h4 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .debug-panel .error {
+            color: #ff4444;
+        }
+
+        .debug-panel .success {
+            color: #44ff44;
+        }
+
+        .debug-panel .warning {
+            color: #ffaa44;
         }
 
         .online-status {
@@ -207,13 +237,6 @@
             background: linear-gradient(135deg, #fff5f5, #fed7d7);
         }
 
-        .stat-card.critical {
-            border-left-color: #dc2626;
-            background: linear-gradient(135deg, #fef2f2, #fee2e2);
-            animation: criticalAlert 2s infinite;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
-        }
-
         .stat-value {
             font-size: 1.8em;
             font-weight: bold;
@@ -224,22 +247,6 @@
         .stat-label {
             color: #718096;
             font-size: 0.9em;
-        }
-
-        .critical-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #dc2626;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: bounce 1s infinite;
         }
 
         .transaction-list {
@@ -324,24 +331,6 @@
             display: none !important;
         }
 
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
-        }
-
-        .date-range {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .date-range input {
-            flex: 1;
-            min-width: 150px;
-        }
-
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -373,15 +362,6 @@
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
-        }
-
-        .critical-alert {
-            background: linear-gradient(135deg, #feb2b2, #f56565);
-            color: white;
-            border: 3px solid #dc2626;
-            animation: criticalPulse 1.5s infinite;
-            font-weight: bold;
-            box-shadow: 0 0 25px rgba(220, 38, 38, 0.5);
         }
 
         .time-display {
@@ -417,49 +397,6 @@
             border-bottom: none;
         }
 
-        .transfer-section {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border: 2px solid #f59e0b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .transfer-section.critical {
-            background: linear-gradient(135deg, #fecaca, #f87171);
-            border: 3px solid #dc2626;
-            animation: criticalAlert 2s infinite;
-        }
-
-        .transfer-ready {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            border: 2px solid #059669;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            background: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .tab-button.active {
-            background: #4299e1;
-            color: white;
-        }
-
         .loading {
             display: inline-block;
             width: 20px;
@@ -470,34 +407,38 @@
             animation: spin 1s linear infinite;
         }
 
-        .transfer-summary {
+        .troubleshoot-section {
             background: #f0f9ff;
-            border: 1px solid #0284c7;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 15px;
-        }
-
-        .transfer-summary.critical {
-            background: #fef2f2;
-            border: 2px solid #dc2626;
-            animation: criticalPulse 2s infinite;
-        }
-
-        .transfer-history-item {
-            background: #d1fae5;
-            border-left: 4px solid #059669;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-        }
-
-        .dashboard-toggle {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #0284c7;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
+        }
+
+        .test-button {
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .reset-section {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        .reset-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .reset-input {
+            max-width: 150px;
+            text-align: center;
         }
 
         @keyframes spin {
@@ -508,34 +449,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-        }
-
-        @keyframes criticalAlert {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
-            }
-            50% { 
-                transform: scale(1.02);
-                box-shadow: 0 0 25px rgba(220, 38, 38, 0.6);
-            }
-        }
-
-        @keyframes criticalPulse {
-            0%, 100% { 
-                background: linear-gradient(135deg, #fecaca, #f87171);
-                box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
-            }
-            50% { 
-                background: linear-gradient(135deg, #f87171, #dc2626);
-                box-shadow: 0 0 25px rgba(220, 38, 38, 0.7);
-            }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-5px); }
-            60% { transform: translateY(-3px); }
         }
 
         @media (max-width: 768px) {
@@ -550,10 +463,6 @@
             .btn {
                 width: 100%;
                 margin-bottom: 10px;
-            }
-            
-            .date-range {
-                flex-direction: column;
             }
 
             .online-status {
@@ -576,12 +485,16 @@
                 width: 100%;
                 justify-content: flex-end;
             }
+
+            .reset-form {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Online Status Indicator -->
-    <div id="onlineStatus" class="online-status">Online</div>
+    <div id="onlineStatus" class="online-status">Testing...</div>
     
     <!-- Sync Indicator -->
     <div id="syncIndicator" class="sync-indicator sync-success hidden">
@@ -590,8 +503,14 @@
 
     <div class="container">
         <div class="header">
-            <h1>🧾 LondriPediaCash</h1>
-            <p>Aplikasi Keuangan Harian LondriPedia</p>
+            <h1>🔧 LondriPediaCash</h1>
+            <p>Debug & Troubleshoot Version - Mencari Akar Masalah</p>
+        </div>
+
+        <!-- Debug Panel -->
+        <div class="debug-panel" id="debugPanel">
+            <h4>🔍 Debug Console</h4>
+            <div id="debugLog">Memulai diagnosis sistem...</div>
         </div>
 
         <!-- Login Section -->
@@ -605,6 +524,46 @@
                     <span id="loginSpinner" class="loading hidden"></span>
                     MASUK
                 </button>
+            </div>
+        </div>
+
+        <!-- Troubleshoot Section (Owner Only) -->
+        <div id="troubleshootSection" class="hidden">
+            <div class="troubleshoot-section">
+                <h3 style="color: #0284c7; margin-bottom: 15px;">🔧 Troubleshooting & System Test</h3>
+                <p style="margin-bottom: 15px; color: #6b7280;">
+                    Gunakan tools ini untuk mendiagnosis masalah sync dan validasi.
+                </p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-primary test-button" onclick="testGoogleSheetsConnection()">
+                        🔗 Test Koneksi Google Sheets
+                    </button>
+                    <button class="btn btn-warning test-button" onclick="testAPIEndpoints()">
+                        🌐 Test API Endpoints
+                    </button>
+                    <button class="btn btn-success test-button" onclick="testDataSync()">
+                        🔄 Test Data Sync
+                    </button>
+                    <button class="btn btn-danger test-button" onclick="clearDebugLog()">
+                        🗑️ Clear Debug Log
+                    </button>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="btn btn-primary test-button" onclick="showCurrentData()">
+                        📊 Show Current Data
+                    </button>
+                    <button class="btn btn-warning test-button" onclick="testValidationSync()">
+                        ✅ Test Validation Sync
+                    </button>
+                    <button class="btn btn-success test-button" onclick="testTransferSync()">
+                        🏦 Test Transfer Sync
+                    </button>
+                    <button class="btn btn-danger test-button" onclick="forceRefreshFromServer()">
+                        🔄 Force Refresh dari Server
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -641,7 +600,10 @@
 
             <!-- Riwayat Input Hari Ini -->
             <div class="card">
-                <h3>📋 Riwayat Input Hari Ini (7 Terakhir)</h3>
+                <h3>📋 Riwayat Input Hari Ini</h3>
+                <button class="btn btn-warning" onclick="forceRefreshFromServer()" style="margin-bottom: 15px;">
+                    🔄 Refresh Data dari Server
+                </button>
                 <div id="todayHistory" class="transaction-list">
                     <div style="text-align: center; color: #6c757d; padding: 20px;">
                         Belum ada input hari ini
@@ -658,109 +620,6 @@
 
         <!-- Owner Section -->
         <div id="ownerSection" class="hidden">
-            <!-- Dashboard Toggle -->
-            <div class="dashboard-toggle">
-                <h3 style="margin-bottom: 15px; color: #4a5568;">📊 Pilih Dashboard Monitoring</h3>
-                <div class="tab-buttons">
-                    <button class="tab-button active" onclick="switchMainDashboard('real')" id="dashReal">💰 Uang Di Rekening (Real Money)</button>
-                    <button class="tab-button" onclick="switchMainDashboard('validated')" id="dashValidated">✅ Uang Tervalidasi (Pending Transfer)</button>
-                    <button class="tab-button" onclick="switchMainDashboard('both')" id="dashBoth">📈 Kedua Dashboard</button>
-                </div>
-            </div>
-
-            <!-- Real Money Dashboard -->
-            <div id="realMoneyDashboard">
-                <div class="card">
-                    <h2>💰 Keuangan Masuk Rekening (Real Money)</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card green">
-                            <div class="stat-value" id="todayTransferred">Rp 0</div>
-                            <div class="stat-label">Hari Ini (Di Rekening)</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-value" id="weekTransferred">Rp 0</div>
-                            <div class="stat-label">Minggu Ini (Di Rekening)</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-value" id="monthTransferred">Rp 0</div>
-                            <div class="stat-label">Bulan Ini (Di Rekening)</div>
-                        </div>
-                        <div class="stat-card orange" id="pendingTransferCard">
-                            <div class="stat-value" id="pendingTransferAmount">Rp 0</div>
-                            <div class="stat-label">Belum Di Rekening</div>
-                            <div id="criticalBadge" class="critical-badge hidden">!</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Validated Money Dashboard -->
-            <div id="validatedMoneyDashboard" class="hidden">
-                <div class="card">
-                    <h2>✅ Keuangan Tervalidasi (Belum Transfer)</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card orange">
-                            <div class="stat-value" id="todayValidated">Rp 0</div>
-                            <div class="stat-label">Hari Ini (Tervalidasi)</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-value" id="weekValidated">Rp 0</div>
-                            <div class="stat-label">Minggu Ini (Tervalidasi)</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-value" id="monthValidated">Rp 0</div>
-                            <div class="stat-label">Bulan Ini (Tervalidasi)</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-value" id="totalTransferredValidated">Rp 0</div>
-                            <div class="stat-label">Total Di Rekening</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Both Dashboard -->
-            <div id="bothDashboard" class="hidden">
-                <div class="card">
-                    <h2>📈 Dashboard Komprehensif</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card green">
-                            <div class="stat-value" id="bothRealMoney">Rp 0</div>
-                            <div class="stat-label">💰 Total Di Rekening</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-value" id="bothValidatedMoney">Rp 0</div>
-                            <div class="stat-label">✅ Total Tervalidasi</div>
-                        </div>
-                        <div class="stat-card red" id="bothPendingCard">
-                            <div class="stat-value" id="bothPendingMoney">Rp 0</div>
-                            <div class="stat-label">⏳ Belum Transfer</div>
-                            <div id="bothCriticalBadge" class="critical-badge hidden">!</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="bothTotalTransactions">0</div>
-                            <div class="stat-label">📋 Total Transaksi</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CRITICAL ALERT: Rp 5.000.000+ -->
-            <div id="criticalTransferAlert" class="alert critical-alert hidden">
-                <div style="flex: 1;">
-                    <div style="font-size: 1.3em; margin-bottom: 8px;">🚨 CRITICAL: UANG BELUM TRANSFER > Rp 5.000.000!</div>
-                    <div style="font-size: 1.1em;">
-                        Total Menumpuk: <span id="criticalAmount" style="font-size: 1.4em;">Rp 0</span> 
-                        dari <span id="criticalCount">0</span> transaksi
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <button class="btn" style="background: white; color: #dc2626; font-weight: bold; font-size: 1.1em;" onclick="processTransferToBank()">
-                            🏦 SEGERA TRANSFER KE REKENING!
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Status Overview -->
             <div class="card">
                 <h3>📊 Status Overview</h3>
@@ -791,67 +650,53 @@
             </div>
 
             <!-- Transfer Management Section -->
-            <div id="transferSection" class="transfer-section hidden">
-                <h3 style="margin-bottom: 16px; color: #92400e;">🟡 MANAJEMEN TRANSFER KE REKENING (FLEKSIBEL)</h3>
-                <div class="transfer-summary" id="transferSummary">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <strong>Siap Transfer (Kapan Saja):</strong>
-                        <span id="readyTransferAmount" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
-                    </div>
-                    <div style="font-size: 0.9em; color: #6b7280;">
-                        <span id="readyTransferCount">0</span> transaksi telah divalidasi dan siap ditransfer ke rekening (Transfer sesuka hati Owner)
-                    </div>
+            <div id="transferSection" class="validation-section hidden">
+                <h3 style="margin-bottom: 16px; color: #92400e;">🟡 MANAJEMEN TRANSFER KE REKENING</h3>
+                <div style="margin-bottom: 15px;">
+                    <strong>Siap Transfer: </strong>
+                    <span id="readyTransferAmount" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
+                    (<span id="readyTransferCount">0</span> transaksi)
                 </div>
                 <div id="readyTransferList" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
                     <!-- Ready to transfer transactions will be loaded here -->
                 </div>
                 <button class="btn btn-success btn-full" onclick="processTransferToBank()" style="font-size: 1.1em;">
                     <span id="transferSpinner" class="loading hidden"></span>
-                    🏦 TRANSFER SEMUA KE REKENING (FLEKSIBEL)
+                    🏦 TRANSFER SEMUA KE REKENING
                 </button>
             </div>
 
-            <!-- Transfer History -->
+            <!-- All Transactions -->
             <div class="card">
-                <h3>💚 Riwayat Transfer ke Rekening</h3>
-                <div style="font-size: 0.9em; color: #6b7280; margin-bottom: 15px;">
-                    History lengkap semua transfer yang pernah dilakukan ke rekening bank
-                </div>
-                <div id="transferHistoryList">
-                    <div style="text-align: center; color: #6c757d; padding: 20px;">
-                        Belum ada transfer ke rekening
-                    </div>
+                <h3>📋 Semua Transaksi</h3>
+                <button class="btn btn-primary" onclick="forceRefreshFromServer()" style="margin-bottom: 15px;">
+                    🔄 Refresh Data dari Server
+                </button>
+                <div id="allTransactions" class="transaction-list">
+                    <!-- All transactions will be loaded here -->
                 </div>
             </div>
 
-            <!-- Chart Section -->
-            <div class="card">
-                <h3>📈 Grafik Pemasukan</h3>
-                <div class="tab-buttons" style="margin-bottom: 15px;">
-                    <button class="tab-button active" onclick="switchChartMode('transferred')" id="chartTransferred">💰 Yang Sudah Di Rekening</button>
-                    <button class="tab-button" onclick="switchChartMode('validated')" id="chartValidated">✅ Yang Sudah Divalidasi</button>
+            <!-- RESET SECTION -->
+            <div class="reset-section">
+                <h3 style="color: #dc2626; text-align: center; margin-bottom: 15px;">🗑️ RESET DATA (HATI-HATI!)</h3>
+                <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <p style="color: #dc2626; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                        ⚠️ PERINGATAN: Fitur ini akan menghapus SEMUA data transaksi!
+                    </p>
+                    <p style="font-size: 0.9em; color: #6b7280; text-align: center;">
+                        Data akan dihapus dari Google Sheets dan localStorage. Tindakan ini TIDAK BISA DIBATALKAN!
+                    </p>
                 </div>
-                <div class="date-range">
-                    <input type="date" id="chartStartDate">
-                    <input type="date" id="chartEndDate">
-                    <button class="btn btn-primary" onclick="updateChart()">Update Grafik</button>
+                <div class="reset-form">
+                    <input type="password" id="resetCode" placeholder="Masukkan kode reset" maxlength="5" class="reset-input form-group input">
+                    <button class="btn btn-danger" onclick="confirmReset()">
+                        <span id="resetSpinner" class="loading hidden"></span>
+                        🗑️ RESET SEMUA DATA
+                    </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="incomeChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Transaction Monitoring -->
-            <div class="card">
-                <h3>📋 Monitoring Semua Transaksi</h3>
-                <div class="tab-buttons">
-                    <button class="tab-button active" onclick="showTransactionTab('all')" id="tabAll">Semua Status</button>
-                    <button class="tab-button" onclick="showTransactionTab('pending')" id="tabPending">Belum Validasi</button>
-                    <button class="tab-button" onclick="showTransactionTab('validated')" id="tabValidated">Belum Transfer</button>
-                    <button class="tab-button" onclick="showTransactionTab('transferred')" id="tabTransferred">Sudah Transfer</button>
-                </div>
-                <div id="transactionTabContent" class="transaction-list">
-                    <!-- Transaction content will be loaded here -->
+                <div style="font-size: 0.8em; color: #9ca3af; text-align: center; margin-top: 10px;">
+                    Kode reset: 08625 (sama dengan kode akses Owner)
                 </div>
             </div>
 
@@ -866,16 +711,60 @@
     <script>
         // Configuration - Google Sheets Integration
         const CONFIG = {
-            GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbyMk4RsCNdLnkILqed4AMN3WC3b6m1F-vlWw24jfvYOwj5OeTLqo0yN7yeK6xMS_t4Iaw/exec', // Ganti dengan URL deployment Google Apps Script
+            GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz6H0I_MRQ8FjxBFuZ4HfZcu5vhWueIXlsbWLeAzkKxjpVCVuWK01tZFy9VIl_GEBkO4w/exec',
             SYNC_ENABLED: true,
-            API_TIMEOUT: 8000,
-            VERSION: '2.2-Perfect',
-            CRITICAL_AMOUNT_THRESHOLD: 5000000 // Rp 5.000.000 threshold
+            API_TIMEOUT: 15000,
+            VERSION: '2.4-Debug',
+            CRITICAL_AMOUNT_THRESHOLD: 5000000
         };
 
-        // Enhanced DataStore with Perfect Flexible Transfer Tracking
+        // Debug Logging System
+        class DebugLogger {
+            constructor() {
+                this.logs = [];
+                this.maxLogs = 50;
+            }
+
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    timestamp,
+                    message,
+                    type
+                };
+                
+                this.logs.unshift(logEntry);
+                if (this.logs.length > this.maxLogs) {
+                    this.logs.pop();
+                }
+                
+                this.updateDisplay();
+                console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+            }
+
+            updateDisplay() {
+                const debugLog = document.getElementById('debugLog');
+                if (!debugLog) return;
+
+                debugLog.innerHTML = this.logs.map(log => {
+                    const className = log.type === 'error' ? 'error' : 
+                                    log.type === 'success' ? 'success' : 
+                                    log.type === 'warning' ? 'warning' : '';
+                    return `<div class="${className}">[${log.timestamp}] ${log.message}</div>`;
+                }).join('');
+            }
+
+            clear() {
+                this.logs = [];
+                this.updateDisplay();
+            }
+        }
+
+        // Enhanced DataStore with Full Debug Support
         class DataStore {
             constructor() {
+                this.logger = new DebugLogger();
+                
                 try {
                     this.transactions = JSON.parse(localStorage.getItem('londripedia_transactions') || '[]');
                     this.transferHistory = JSON.parse(localStorage.getItem('londripedia_transfers') || '[]');
@@ -883,30 +772,33 @@
                     this.storageAvailable = true;
                     this.isOnline = navigator.onLine;
                     
-                    // Load demo data if empty
-                    if (this.transactions.length === 0) {
-                        this.loadDemoData();
+                    this.logger.log(`Memuat data lokal: ${this.transactions.length} transaksi`, 'success');
+                    
+                    // Load minimal demo data only if completely empty
+                    if (this.transactions.length === 0 && !localStorage.getItem('londripedia_initialized')) {
+                        this.loadMinimalDemoData();
+                        localStorage.setItem('londripedia_initialized', 'true');
                     }
                     
-                    // Test Google Sheets connection
+                    // Test connection
                     this.testConnection();
                 } catch (error) {
-                    console.log('Using memory storage (data will not persist)');
+                    this.logger.log('Error loading data: ' + error.message, 'error');
                     this.transactions = [];
                     this.transferHistory = [];
                     this.lastId = 0;
                     this.storageAvailable = false;
                     this.isOnline = false;
-                    this.loadDemoData();
+                    this.loadMinimalDemoData();
                 }
             }
 
-            loadDemoData() {
-                // Add demo data including some over Rp 5M threshold
+            loadMinimalDemoData() {
+                // Only 2 demo transactions to minimize clutter
                 const today = new Date();
-                const demoAmounts = [2500000, 1800000, 3200000, 4500000, 2200000, 1500000, 6000000, 800000];
+                const demoAmounts = [1500000, 2200000];
                 
-                for (let i = 0; i < 8; i++) {
+                for (let i = 0; i < 2; i++) {
                     const date = new Date(today);
                     date.setDate(date.getDate() - i);
                     
@@ -915,34 +807,23 @@
                         timestamp: date.toISOString(),
                         date: date.toISOString().split('T')[0],
                         amount: demoAmounts[i],
-                        note: i % 3 === 0 ? `Demo transaksi ${i + 1}` : '',
+                        note: `Demo data ${i + 1}`,
                         inputBy: 'SPV',
-                        validated: i < 7, // 7 transactions validated
-                        transferred: i < 2, // Only 2 transactions transferred
-                        transferDate: i < 2 ? date.toISOString().split('T')[0] : null
+                        validated: i === 1, // Only second transaction validated
+                        transferred: false,
+                        transferDate: null
                     };
                     
                     this.transactions.push(transaction);
                 }
                 
-                // Add transfer history
-                if (this.transactions.filter(t => t.transferred).length > 0) {
-                    const transferredTransactions = this.transactions.filter(t => t.transferred);
-                    this.transferHistory.push({
-                        id: 1,
-                        date: today.toISOString().split('T')[0],
-                        count: transferredTransactions.length,
-                        total: transferredTransactions.reduce((sum, t) => sum + t.amount, 0),
-                        periodFrom: transferredTransactions[0].date,
-                        periodTo: transferredTransactions[transferredTransactions.length - 1].date,
-                        note: 'Demo transfer ke rekening'
-                    });
-                }
-                
                 this.save();
+                this.logger.log('Loaded minimal demo data (2 transactions)', 'info');
             }
 
             async testConnection() {
+                this.logger.log('Testing Google Sheets connection...', 'info');
+                
                 try {
                     const controller = new AbortController();
                     setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
@@ -953,33 +834,48 @@
                         signal: controller.signal
                     });
                     
+                    this.logger.log(`HTTP Response: ${response.status} ${response.statusText}`, 'info');
+                    
                     if (response.ok) {
                         const result = await response.json();
-                        if (result.success) {
+                        this.logger.log('Response data: ' + JSON.stringify(result), 'info');
+                        
+                        if (result && result.success) {
                             this.isOnline = true;
                             updateOnlineStatus(true);
-                            console.log('✅ Google Sheets connection established');
+                            this.logger.log('✅ Google Sheets connection SUCCESS', 'success');
                         } else {
-                            throw new Error('API returned error');
+                            throw new Error('API returned unsuccessful response');
                         }
                     } else {
-                        throw new Error('API not responding');
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
                 } catch (error) {
                     this.isOnline = false;
                     updateOnlineStatus(false);
-                    console.log('📱 Using offline mode:', error.message);
+                    this.logger.log('❌ Connection failed: ' + error.message, 'error');
+                    
+                    if (error.name === 'AbortError') {
+                        this.logger.log('⏱️ Connection timeout after 15 seconds', 'warning');
+                    }
                 }
             }
 
             async syncToGoogleSheets(action, data) {
-                if (!this.isOnline || !CONFIG.SYNC_ENABLED) return null;
+                if (!this.isOnline || !CONFIG.SYNC_ENABLED) {
+                    this.logger.log('Sync skipped: offline or disabled', 'warning');
+                    return null;
+                }
+                
+                this.logger.log(`Syncing to Google Sheets: ${action}`, 'info');
+                showSyncIndicator('pending');
                 
                 try {
-                    showSyncIndicator('pending');
-                    
                     const controller = new AbortController();
                     setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
+                    
+                    const payload = { action, ...data };
+                    this.logger.log('Payload: ' + JSON.stringify(payload), 'info');
                     
                     const response = await fetch(CONFIG.GOOGLE_SHEETS_API_URL, {
                         method: 'POST',
@@ -987,27 +883,118 @@
                         headers: {
                             "Content-Type": "text/plain;charset=utf-8",
                         },
-                        body: JSON.stringify({ action, ...data }),
+                        body: JSON.stringify(payload),
                         signal: controller.signal
                     });
                     
+                    this.logger.log(`Sync Response: ${response.status} ${response.statusText}`, 'info');
+                    
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
                     
                     const result = await response.json();
+                    this.logger.log('Sync result: ' + JSON.stringify(result), 'info');
                     
-                    if (!result.success) {
-                        throw new Error(result.message || 'API returned error');
+                    if (!result || !result.success) {
+                        throw new Error(result?.message || 'API returned unsuccessful response');
                     }
                     
                     showSyncIndicator('success');
+                    this.logger.log('✅ Sync successful: ' + action, 'success');
                     return result;
                     
                 } catch (error) {
                     showSyncIndicator('error');
-                    console.error('Sync error:', error);
+                    this.logger.log('❌ Sync failed: ' + error.message, 'error');
                     return null;
+                }
+            }
+
+            async syncFromGoogleSheets() {
+                if (!this.isOnline || !CONFIG.SYNC_ENABLED) {
+                    this.logger.log('Sync from server skipped: offline or disabled', 'warning');
+                    return false;
+                }
+                
+                this.logger.log('Syncing FROM Google Sheets...', 'info');
+                showSyncIndicator('pending');
+                
+                try {
+                    const controller = new AbortController();
+                    setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
+                    
+                    const response = await fetch(CONFIG.GOOGLE_SHEETS_API_URL + '?action=get_all_data', {
+                        method: 'GET',
+                        redirect: 'follow',
+                        signal: controller.signal
+                    });
+                    
+                    this.logger.log(`Fetch Response: ${response.status} ${response.statusText}`, 'info');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    this.logger.log('Server data: ' + JSON.stringify(result), 'info');
+                    
+                    if (result && result.success && result.data) {
+                        // Update local data with server data
+                        if (result.data.transactions) {
+                            this.transactions = result.data.transactions;
+                            this.logger.log(`Updated ${this.transactions.length} transactions from server`, 'success');
+                        }
+                        if (result.data.transfers) {
+                            this.transferHistory = result.data.transfers;
+                        }
+                        if (result.data.lastId) {
+                            this.lastId = result.data.lastId;
+                        }
+                        
+                        this.save();
+                        showSyncIndicator('success');
+                        this.logger.log('✅ Data synchronized from Google Sheets', 'success');
+                        return true;
+                    } else {
+                        throw new Error('Invalid response structure from server');
+                    }
+                    
+                } catch (error) {
+                    showSyncIndicator('error');
+                    this.logger.log('❌ Sync from server failed: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            async resetAllData() {
+                this.logger.log('🗑️ Starting complete data reset...', 'warning');
+                
+                try {
+                    // Clear local storage
+                    this.transactions = [];
+                    this.transferHistory = [];
+                    this.lastId = 0;
+                    this.save();
+                    localStorage.removeItem('londripedia_initialized');
+                    
+                    this.logger.log('Local data cleared', 'info');
+                    
+                    // Clear server data
+                    if (this.isOnline) {
+                        const result = await this.syncToGoogleSheets('reset_all_data', {});
+                        if (result) {
+                            this.logger.log('✅ Server data cleared successfully', 'success');
+                        } else {
+                            this.logger.log('⚠️ Failed to clear server data', 'warning');
+                        }
+                    }
+                    
+                    this.logger.log('✅ Complete data reset finished', 'success');
+                    return true;
+                } catch (error) {
+                    this.logger.log('❌ Reset error: ' + error.message, 'error');
+                    return false;
                 }
             }
 
@@ -1018,7 +1005,7 @@
                         localStorage.setItem('londripedia_transfers', JSON.stringify(this.transferHistory));
                         localStorage.setItem('londripedia_last_id', this.lastId.toString());
                     } catch (error) {
-                        console.log('Cannot save to localStorage, using memory only');
+                        this.logger.log('Cannot save to localStorage: ' + error.message, 'error');
                     }
                 }
             }
@@ -1040,13 +1027,18 @@
                 // Save locally first
                 this.transactions.push(transaction);
                 this.save();
+                this.logger.log(`Transaction added locally: ID ${transaction.id}, Amount ${amount}`, 'success');
                 
                 // Sync to Google Sheets
-                if (this.isOnline) {
-                    await this.syncToGoogleSheets('add_transaction', {
-                        amount: amount,
-                        note: note
-                    });
+                const result = await this.syncToGoogleSheets('add_transaction', {
+                    amount: amount,
+                    note: note
+                });
+                
+                if (result) {
+                    this.logger.log('Transaction synced to Google Sheets', 'success');
+                } else {
+                    this.logger.log('Failed to sync transaction to Google Sheets', 'warning');
                 }
                 
                 return transaction;
@@ -1054,33 +1046,70 @@
 
             async validateTransaction(id) {
                 const transaction = this.transactions.find(t => t.id === id);
-                if (transaction) {
-                    transaction.validated = true;
+                if (!transaction) {
+                    this.logger.log(`Transaction ID ${id} not found`, 'error');
+                    return false;
+                }
+                
+                this.logger.log(`Validating transaction ID ${id}`, 'info');
+                
+                // Save locally first
+                transaction.validated = true;
+                this.save();
+                this.logger.log(`Transaction ID ${id} validated locally`, 'success');
+                
+                // Sync to Google Sheets
+                const result = await this.syncToGoogleSheets('validate_transaction', { id });
+                
+                if (result) {
+                    this.logger.log(`Transaction ID ${id} validation synced to Google Sheets`, 'success');
+                    return true;
+                } else {
+                    // Revert local change if sync failed
+                    transaction.validated = false;
                     this.save();
-                    
-                    // Sync to Google Sheets
-                    if (this.isOnline) {
-                        await this.syncToGoogleSheets('validate_transaction', { id });
-                    }
+                    this.logger.log(`Sync failed, reverted validation for transaction ID ${id}`, 'error');
+                    throw new Error('Failed to sync validation to server');
                 }
             }
 
             async deleteTransaction(id) {
                 const index = this.transactions.findIndex(t => t.id === id);
-                if (index !== -1) {
-                    this.transactions.splice(index, 1);
+                if (index === -1) {
+                    this.logger.log(`Transaction ID ${id} not found for deletion`, 'error');
+                    return false;
+                }
+                
+                this.logger.log(`Deleting transaction ID ${id}`, 'info');
+                
+                const deletedTransaction = this.transactions[index];
+                this.transactions.splice(index, 1);
+                this.save();
+                this.logger.log(`Transaction ID ${id} deleted locally`, 'success');
+                
+                // Sync to Google Sheets
+                const result = await this.syncToGoogleSheets('delete_transaction', { id });
+                
+                if (result) {
+                    this.logger.log(`Transaction ID ${id} deletion synced to Google Sheets`, 'success');
+                    return true;
+                } else {
+                    // Restore the transaction if sync failed
+                    this.transactions.splice(index, 0, deletedTransaction);
                     this.save();
-                    
-                    // Sync to Google Sheets
-                    if (this.isOnline) {
-                        await this.syncToGoogleSheets('delete_transaction', { id });
-                    }
+                    this.logger.log(`Sync failed, restored transaction ID ${id}`, 'error');
+                    throw new Error('Failed to sync deletion to server');
                 }
             }
 
             async transferToBank() {
                 const readyTransactions = this.transactions.filter(t => t.validated && !t.transferred);
-                if (readyTransactions.length === 0) return null;
+                if (readyTransactions.length === 0) {
+                    this.logger.log('No transactions ready for transfer', 'warning');
+                    return null;
+                }
+
+                this.logger.log(`Processing transfer for ${readyTransactions.length} transactions`, 'info');
 
                 const now = new Date();
                 const transferRecord = {
@@ -1090,10 +1119,13 @@
                     total: readyTransactions.reduce((sum, t) => sum + t.amount, 0),
                     periodFrom: readyTransactions[readyTransactions.length - 1].date,
                     periodTo: readyTransactions[0].date,
-                    note: 'Transfer fleksibel ke rekening bank'
+                    note: 'Transfer ke rekening bank'
                 };
 
-                // Mark all ready transactions as transferred
+                // Backup original state for rollback
+                const originalTransactions = readyTransactions.map(t => ({...t}));
+
+                // Mark as transferred locally
                 readyTransactions.forEach(t => {
                     t.transferred = true;
                     t.transferDate = now.toISOString().split('T')[0];
@@ -1101,62 +1133,50 @@
 
                 this.transferHistory.unshift(transferRecord);
                 this.save();
+                this.logger.log(`Transfer processed locally: ${formatCurrency(transferRecord.total)}`, 'success');
                 
                 // Sync to Google Sheets
-                if (this.isOnline) {
-                    await this.syncToGoogleSheets('transfer_all', {});
-                }
+                const result = await this.syncToGoogleSheets('transfer_all', {});
                 
-                return transferRecord;
+                if (result) {
+                    this.logger.log('Transfer synced to Google Sheets', 'success');
+                    return transferRecord;
+                } else {
+                    // Rollback all changes if sync failed
+                    originalTransactions.forEach(original => {
+                        const transaction = this.transactions.find(t => t.id === original.id);
+                        if (transaction) {
+                            transaction.transferred = original.transferred;
+                            transaction.transferDate = original.transferDate;
+                        }
+                    });
+                    this.transferHistory.shift(); // Remove the transfer record
+                    this.save();
+                    this.logger.log('Sync failed, rolled back transfer', 'error');
+                    throw new Error('Failed to sync transfer to server');
+                }
             }
 
-            // Get comprehensive stats with critical alert detection
+            // Get comprehensive stats
             getStats() {
                 const today = new Date().toISOString().split('T')[0];
-                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-                // Transactions by status
-                const transferredTransactions = this.transactions.filter(t => t.transferred);
                 const validatedTransactions = this.transactions.filter(t => t.validated);
                 const validatedNotTransferred = this.transactions.filter(t => t.validated && !t.transferred);
                 const pendingValidation = this.transactions.filter(t => !t.validated);
-
-                // Calculate amounts
-                const pendingTransferAmount = validatedNotTransferred.reduce((sum, t) => sum + t.amount, 0);
-                const isCritical = pendingTransferAmount >= CONFIG.CRITICAL_AMOUNT_THRESHOLD;
+                const transferredTransactions = this.transactions.filter(t => t.transferred);
 
                 return {
-                    // Real money (already in bank account)
-                    todayTransferred: transferredTransactions.filter(t => t.transferDate === today).reduce((sum, t) => sum + t.amount, 0),
-                    weekTransferred: transferredTransactions.filter(t => t.transferDate >= weekAgo).reduce((sum, t) => sum + t.amount, 0),
-                    monthTransferred: transferredTransactions.filter(t => t.transferDate >= monthAgo).reduce((sum, t) => sum + t.amount, 0),
-                    
-                    // Validated money (includes both transferred and not transferred)
-                    todayValidated: validatedTransactions.filter(t => t.date === today).reduce((sum, t) => sum + t.amount, 0),
-                    weekValidated: validatedTransactions.filter(t => t.date >= weekAgo).reduce((sum, t) => sum + t.amount, 0),
-                    monthValidated: validatedTransactions.filter(t => t.date >= monthAgo).reduce((sum, t) => sum + t.amount, 0),
-                    
-                    // Pending amounts
-                    pendingTransferAmount: pendingTransferAmount,
-                    pendingTransferCount: validatedNotTransferred.length,
-                    isCritical: isCritical,
-                    
-                    // Counts for status overview
                     pendingValidationCount: pendingValidation.length,
                     validatedNotTransferredCount: validatedNotTransferred.length,
                     transferredCount: transferredTransactions.length,
-                    
-                    // Total amounts
-                    totalValidated: validatedTransactions.reduce((sum, t) => sum + t.amount, 0),
-                    totalTransferred: transferredTransactions.reduce((sum, t) => sum + t.amount, 0),
-                    totalTransactions: this.transactions.length
+                    totalTransactions: this.transactions.length,
+                    pendingTransferAmount: validatedNotTransferred.reduce((sum, t) => sum + t.amount, 0)
                 };
             }
 
             getTodayTransactions() {
                 const today = new Date().toISOString().split('T')[0];
-                return this.transactions.filter(t => t.date === today).slice(-7).reverse();
+                return this.transactions.filter(t => t.date === today).reverse();
             }
 
             getPendingValidation() {
@@ -1170,48 +1190,11 @@
             getAllTransactions() {
                 return [...this.transactions].reverse();
             }
-
-            getTransactionsByStatus(status) {
-                switch(status) {
-                    case 'pending':
-                        return this.transactions.filter(t => !t.validated).reverse();
-                    case 'validated':
-                        return this.transactions.filter(t => t.validated && !t.transferred).reverse();
-                    case 'transferred':
-                        return this.transactions.filter(t => t.transferred).reverse();
-                    default:
-                        return this.getAllTransactions();
-                }
-            }
-
-            getChartData(mode, startDate, endDate) {
-                let filteredTransactions;
-                
-                if (mode === 'transferred') {
-                    filteredTransactions = this.transactions.filter(t => 
-                        t.transferred && 
-                        t.transferDate >= startDate && 
-                        t.transferDate <= endDate
-                    );
-                } else {
-                    filteredTransactions = this.transactions.filter(t => 
-                        t.validated && 
-                        t.date >= startDate && 
-                        t.date <= endDate
-                    );
-                }
-
-                return filteredTransactions;
-            }
         }
 
         // Global variables
         let dataStore = new DataStore();
         let currentView = 'login';
-        let currentTransactionTab = 'all';
-        let currentMainDashboard = 'real';
-        let currentChartMode = 'transferred';
-        let incomeChart = null;
 
         // Utility functions
         function formatCurrency(amount) {
@@ -1268,10 +1251,16 @@
         }
 
         function showScreen(screenId) {
-            document.querySelectorAll('#loginSection, #kasirSection, #ownerSection').forEach(screen => {
+            document.querySelectorAll('#loginSection, #kasirSection, #ownerSection, #troubleshootSection').forEach(screen => {
                 screen.classList.add('hidden');
             });
             document.getElementById(screenId).classList.remove('hidden');
+            
+            // Show troubleshoot section for owner
+            if (screenId === 'ownerSection') {
+                document.getElementById('troubleshootSection').classList.remove('hidden');
+            }
+            
             currentView = screenId.replace('Section', '');
         }
 
@@ -1279,15 +1268,17 @@
             const alertContainer = document.getElementById('alertContainer');
             const alertClass = type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : type === 'danger' ? 'alert-danger' : 'alert-info';
             
-            alertContainer.innerHTML = `
-                <div class="alert ${alertClass}">
-                    ${message}
-                </div>
-            `;
-            
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
-            }, duration);
+            if (alertContainer) {
+                alertContainer.innerHTML = `
+                    <div class="alert ${alertClass}">
+                        ${message}
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, duration);
+            }
         }
 
         // Online Status & Sync Functions
@@ -1316,6 +1307,186 @@
                     indicator.innerHTML = '⏳ Menyinkronkan...';
                     indicator.classList.remove('hidden');
                     break;
+            }
+        }
+
+        // Troubleshooting Functions
+        async function testGoogleSheetsConnection() {
+            dataStore.logger.log('🔗 Manual connection test started...', 'info');
+            await dataStore.testConnection();
+        }
+
+        async function testAPIEndpoints() {
+            dataStore.logger.log('🌐 Testing API endpoints...', 'info');
+            
+            const endpoints = [
+                { name: 'Health Check', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=health_check', method: 'GET' },
+                { name: 'Get All Data', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=get_all_data', method: 'GET' },
+                { name: 'Add Transaction', url: CONFIG.GOOGLE_SHEETS_API_URL, method: 'POST', body: { action: 'add_transaction', amount: 1000, note: 'test' } }
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    dataStore.logger.log(`Testing ${endpoint.name}...`, 'info');
+                    
+                    const options = {
+                        method: endpoint.method,
+                        redirect: 'follow'
+                    };
+                    
+                    if (endpoint.method === 'POST' && endpoint.body) {
+                        options.headers = { "Content-Type": "text/plain;charset=utf-8" };
+                        options.body = JSON.stringify(endpoint.body);
+                    }
+                    
+                    const response = await fetch(endpoint.url, options);
+                    dataStore.logger.log(`${endpoint.name}: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        dataStore.logger.log(`${endpoint.name} response: ${JSON.stringify(result)}`, 'info');
+                    }
+                } catch (error) {
+                    dataStore.logger.log(`${endpoint.name} failed: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function testDataSync() {
+            dataStore.logger.log('🔄 Testing data synchronization...', 'info');
+            const success = await dataStore.syncFromGoogleSheets();
+            if (success) {
+                updateOwnerDashboard();
+                dataStore.logger.log('Data sync test completed successfully', 'success');
+            } else {
+                dataStore.logger.log('Data sync test failed', 'error');
+            }
+        }
+
+        async function testValidationSync() {
+            dataStore.logger.log('✅ Testing validation sync...', 'info');
+            const pendingTransactions = dataStore.getPendingValidation();
+            
+            if (pendingTransactions.length === 0) {
+                dataStore.logger.log('No pending transactions to test validation', 'warning');
+                return;
+            }
+            
+            const testTransaction = pendingTransactions[0];
+            dataStore.logger.log(`Testing validation for transaction ID ${testTransaction.id}`, 'info');
+            
+            try {
+                await dataStore.validateTransaction(testTransaction.id);
+                dataStore.logger.log('Validation sync test SUCCESS', 'success');
+                updateOwnerDashboard();
+            } catch (error) {
+                dataStore.logger.log('Validation sync test FAILED: ' + error.message, 'error');
+            }
+        }
+
+        async function testTransferSync() {
+            dataStore.logger.log('🏦 Testing transfer sync...', 'info');
+            const readyTransactions = dataStore.getReadyForTransfer();
+            
+            if (readyTransactions.length === 0) {
+                dataStore.logger.log('No transactions ready for transfer test', 'warning');
+                return;
+            }
+            
+            try {
+                const transferRecord = await dataStore.transferToBank();
+                if (transferRecord) {
+                    dataStore.logger.log('Transfer sync test SUCCESS', 'success');
+                    updateOwnerDashboard();
+                } else {
+                    dataStore.logger.log('Transfer sync test returned null', 'warning');
+                }
+            } catch (error) {
+                dataStore.logger.log('Transfer sync test FAILED: ' + error.message, 'error');
+            }
+        }
+
+        function showCurrentData() {
+            dataStore.logger.log('📊 Current data overview:', 'info');
+            dataStore.logger.log(`Total transactions: ${dataStore.transactions.length}`, 'info');
+            dataStore.logger.log(`Transfer history: ${dataStore.transferHistory.length}`, 'info');
+            dataStore.logger.log(`Last ID: ${dataStore.lastId}`, 'info');
+            dataStore.logger.log(`Online status: ${dataStore.isOnline}`, 'info');
+            
+            const stats = dataStore.getStats();
+            dataStore.logger.log(`Pending validation: ${stats.pendingValidationCount}`, 'info');
+            dataStore.logger.log(`Ready for transfer: ${stats.validatedNotTransferredCount}`, 'info');
+            dataStore.logger.log(`Already transferred: ${stats.transferredCount}`, 'info');
+        }
+
+        async function forceRefreshFromServer() {
+            dataStore.logger.log('🔄 Force refresh from server...', 'info');
+            const success = await dataStore.syncFromGoogleSheets();
+            
+            if (success) {
+                // Update all views
+                if (currentView === 'kasir') {
+                    loadTodayHistory();
+                } else if (currentView === 'owner') {
+                    updateOwnerDashboard();
+                }
+                showAlert('✅ Data berhasil di-refresh dari server!', 'success');
+            } else {
+                showAlert('❌ Gagal refresh data dari server. Periksa debug log untuk detail.', 'danger');
+            }
+        }
+
+        function clearDebugLog() {
+            dataStore.logger.clear();
+        }
+
+        // Reset Functions
+        async function confirmReset() {
+            const code = document.getElementById('resetCode').value.trim();
+            const spinner = document.getElementById('resetSpinner');
+            
+            if (code !== '08625') {
+                showAlert('❌ Kode reset salah!', 'danger');
+                return;
+            }
+            
+            const confirmMessage = `🚨 KONFIRMASI RESET DATA 🚨
+
+Anda akan menghapus:
+• SEMUA transaksi (${dataStore.transactions.length} transaksi)
+• SEMUA riwayat transfer (${dataStore.transferHistory.length} transfer)
+• Data dari Google Sheets dan localStorage
+
+TINDAKAN INI TIDAK BISA DIBATALKAN!
+
+Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
+            
+            const finalConfirm = prompt(confirmMessage);
+            
+            if (finalConfirm !== 'HAPUS SEMUA') {
+                showAlert('🚫 Reset dibatalkan', 'info');
+                return;
+            }
+            
+            spinner.classList.remove('hidden');
+            
+            try {
+                const success = await dataStore.resetAllData();
+                
+                if (success) {
+                    showAlert('✅ SEMUA DATA BERHASIL DIHAPUS! Aplikasi akan direload...', 'success', 3000);
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+                } else {
+                    showAlert('❌ Gagal menghapus data. Periksa debug log untuk detail.', 'danger');
+                }
+            } catch (error) {
+                showAlert('❌ Error saat reset: ' + error.message, 'danger');
+            } finally {
+                spinner.classList.add('hidden');
+                document.getElementById('resetCode').value = '';
             }
         }
 
@@ -1350,13 +1521,9 @@
 
         function logout() {
             showScreen('loginSection');
-            if (incomeChart) {
-                incomeChart.destroy();
-                incomeChart = null;
-            }
         }
 
-        // Kasir Screen functions (UNCHANGED)
+        // Kasir Screen functions
         function initKasirScreen() {
             document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
             updateTime();
@@ -1364,6 +1531,7 @@
             
             // Update time every second
             setInterval(updateTime, 1000);
+            dataStore.logger.log('Kasir screen initialized', 'success');
         }
 
         function loadTodayHistory() {
@@ -1391,92 +1559,16 @@
         // Owner Screen functions
         function initOwnerScreen() {
             updateOwnerDashboard();
-            showTransactionTab('all');
-            initChart();
-            
-            // Auto refresh every 30 seconds
-            setInterval(() => {
-                if (currentView === 'owner') {
-                    updateOwnerDashboard();
-                }
-            }, 30000);
-        }
-
-        function switchMainDashboard(type) {
-            currentMainDashboard = type;
-            
-            // Update tab buttons
-            document.querySelectorAll('.dashboard-toggle .tab-button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('dash' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
-            
-            // Show/hide dashboards
-            document.getElementById('realMoneyDashboard').classList.toggle('hidden', type !== 'real' && type !== 'both');
-            document.getElementById('validatedMoneyDashboard').classList.toggle('hidden', type !== 'validated');
-            document.getElementById('bothDashboard').classList.toggle('hidden', type !== 'both');
-            
-            updateOwnerDashboard();
+            dataStore.logger.log('Owner screen initialized', 'success');
         }
 
         function updateOwnerDashboard() {
             const stats = dataStore.getStats();
             
-            // Update Real Money Dashboard
-            document.getElementById('todayTransferred').textContent = formatCurrency(stats.todayTransferred);
-            document.getElementById('weekTransferred').textContent = formatCurrency(stats.weekTransferred);
-            document.getElementById('monthTransferred').textContent = formatCurrency(stats.monthTransferred);
-            document.getElementById('pendingTransferAmount').textContent = formatCurrency(stats.pendingTransferAmount);
-            
-            // Update Validated Money Dashboard
-            document.getElementById('todayValidated').textContent = formatCurrency(stats.todayValidated);
-            document.getElementById('weekValidated').textContent = formatCurrency(stats.weekValidated);
-            document.getElementById('monthValidated').textContent = formatCurrency(stats.monthValidated);
-            document.getElementById('totalTransferredValidated').textContent = formatCurrency(stats.totalTransferred);
-            
-            // Update Both Dashboard
-            document.getElementById('bothRealMoney').textContent = formatCurrency(stats.totalTransferred);
-            document.getElementById('bothValidatedMoney').textContent = formatCurrency(stats.totalValidated);
-            document.getElementById('bothPendingMoney').textContent = formatCurrency(stats.pendingTransferAmount);
-            document.getElementById('bothTotalTransactions').textContent = stats.totalTransactions;
-            
             // Update status overview
             document.getElementById('pendingValidationCount').textContent = stats.pendingValidationCount;
             document.getElementById('validatedNotTransferredCount').textContent = stats.validatedNotTransferredCount;
             document.getElementById('transferredCount').textContent = stats.transferredCount;
-            
-            // Handle critical alerts (Rp 5M+)
-            const criticalAlert = document.getElementById('criticalTransferAlert');
-            const criticalBadge = document.getElementById('criticalBadge');
-            const bothCriticalBadge = document.getElementById('bothCriticalBadge');
-            const pendingCard = document.getElementById('pendingTransferCard');
-            const bothPendingCard = document.getElementById('bothPendingCard');
-            const transferSummary = document.getElementById('transferSummary');
-            const transferSection = document.getElementById('transferSection');
-            
-            if (stats.isCritical) {
-                // Show critical alert
-                document.getElementById('criticalAmount').textContent = formatCurrency(stats.pendingTransferAmount);
-                document.getElementById('criticalCount').textContent = stats.pendingTransferCount;
-                criticalAlert.classList.remove('hidden');
-                
-                // Add critical styling to cards
-                if (criticalBadge) criticalBadge.classList.remove('hidden');
-                if (bothCriticalBadge) bothCriticalBadge.classList.remove('hidden');
-                if (pendingCard) pendingCard.classList.add('critical');
-                if (bothPendingCard) bothPendingCard.classList.add('critical');
-                if (transferSummary) transferSummary.classList.add('critical');
-                if (transferSection) transferSection.classList.add('critical');
-            } else {
-                // Hide critical alert
-                criticalAlert.classList.add('hidden');
-                
-                // Remove critical styling
-                if (criticalBadge) criticalBadge.classList.add('hidden');
-                if (bothCriticalBadge) bothCriticalBadge.classList.add('hidden');
-                if (pendingCard) pendingCard.classList.remove('critical');
-                if (bothPendingCard) bothPendingCard.classList.remove('critical');
-                if (transferSummary) transferSummary.classList.remove('critical');
-                if (transferSection) transferSection.classList.remove('critical');
-            }
             
             // Show/hide validation section
             const validationSection = document.getElementById('validationSection');
@@ -1488,18 +1580,16 @@
             }
             
             // Show/hide transfer section
+            const transferSection = document.getElementById('transferSection');
             if (stats.validatedNotTransferredCount > 0) {
-                document.getElementById('transferSection').classList.remove('hidden');
+                transferSection.classList.remove('hidden');
                 loadReadyForTransfer();
             } else {
-                document.getElementById('transferSection').classList.add('hidden');
+                transferSection.classList.add('hidden');
             }
             
-            // Load transfer history
-            loadTransferHistory();
-            
-            // Refresh current tab
-            showTransactionTab(currentTransactionTab);
+            // Load all transactions
+            loadAllTransactions();
         }
 
         function loadPendingValidation() {
@@ -1555,102 +1645,12 @@
             `).join('');
         }
 
-        function loadTransferHistory() {
-            const container = document.getElementById('transferHistoryList');
-            const history = dataStore.transferHistory;
-            
-            if (history.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transfer ke rekening</div>';
-                return;
-            }
-
-            container.innerHTML = history.map(h => `
-                <div class="transfer-history-item">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <strong style="color: #065f46;">Transfer #${h.id}</strong>
-                        <span style="font-size: 1.2em; font-weight: bold; color: #065f46;">${formatCurrency(h.total)}</span>
-                    </div>
-                    <div style="font-size: 0.9em; color: #059669;">
-                        📅 ${new Date(h.date).toLocaleDateString('id-ID')} • ${h.count} transaksi • ${h.note}
-                    </div>
-                    <div style="font-size: 0.8em; color: #6b7280; margin-top: 4px;">
-                        Periode: ${new Date(h.periodFrom).toLocaleDateString('id-ID')} - ${new Date(h.periodTo).toLocaleDateString('id-ID')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function validateTransaction(id) {
-            await dataStore.validateTransaction(id);
-            showAlert('✅ Transaksi berhasil divalidasi!');
-            updateOwnerDashboard();
-        }
-
-        async function deleteTransaction(id) {
-            if (confirm('Yakin ingin menolak transaksi ini?')) {
-                await dataStore.deleteTransaction(id);
-                showAlert('❌ Transaksi berhasil ditolak!', 'warning');
-                updateOwnerDashboard();
-            }
-        }
-
-        async function processTransferToBank() {
-            const readyTransactions = dataStore.getReadyForTransfer();
-            
-            if (readyTransactions.length === 0) {
-                showAlert('Tidak ada transaksi yang siap untuk ditransfer!', 'warning');
-                return;
-            }
-
-            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
-            const isCritical = totalAmount >= CONFIG.CRITICAL_AMOUNT_THRESHOLD;
-            
-            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
-            if (isCritical) {
-                message += '\n\n🚨 JUMLAH BESAR (>5 Juta) - Pastikan rekening siap!';
-            }
-            
-            if (confirm(message)) {
-                const spinner = document.getElementById('transferSpinner');
-                if (spinner) spinner.classList.remove('hidden');
-                
-                try {
-                    const transferRecord = await dataStore.transferToBank();
-                    
-                    if (transferRecord) {
-                        const successMessage = isCritical ? 
-                            `🎉 SUKSES! Transfer besar ${formatCurrency(transferRecord.total)} dari ${transferRecord.count} transaksi berhasil masuk rekening!` :
-                            `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
-                        
-                        showAlert(successMessage, 'success', 6000);
-                        updateOwnerDashboard();
-                    }
-                } catch (error) {
-                    showAlert('❌ Error saat proses transfer: ' + error.message, 'danger');
-                } finally {
-                    if (spinner) spinner.classList.add('hidden');
-                }
-            }
-        }
-
-        function showTransactionTab(tabName) {
-            currentTransactionTab = tabName;
-            
-            // Update tab buttons
-            document.querySelectorAll('#transactionTabContent').parent?.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
-            
-            const container = document.getElementById('transactionTabContent');
-            const transactions = dataStore.getTransactionsByStatus(tabName);
+        function loadAllTransactions() {
+            const container = document.getElementById('allTransactions');
+            const transactions = dataStore.getAllTransactions();
             
             if (transactions.length === 0) {
-                const messages = {
-                    'all': 'Belum ada transaksi',
-                    'pending': 'Tidak ada transaksi yang belum divalidasi',
-                    'validated': 'Tidak ada transaksi yang belum ditransfer',
-                    'transferred': 'Tidak ada transaksi yang sudah ditransfer'
-                };
-                container.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 20px;">${messages[tabName]}</div>`;
+                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transaksi</div>';
                 return;
             }
 
@@ -1668,103 +1668,58 @@
             `).join('');
         }
 
-        function switchChartMode(mode) {
-            currentChartMode = mode;
-            
-            // Update tab buttons
-            document.getElementById('chartTransferred').classList.toggle('active', mode === 'transferred');
-            document.getElementById('chartValidated').classList.toggle('active', mode === 'validated');
-            
-            updateChart();
+        async function validateTransaction(id) {
+            try {
+                await dataStore.validateTransaction(id);
+                showAlert('✅ Transaksi berhasil divalidasi!');
+                updateOwnerDashboard();
+            } catch (error) {
+                showAlert('❌ Error validasi: ' + error.message, 'danger');
+            }
         }
 
-        function initChart() {
-            // Set default date range (last 30 days)
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - 30);
-            
-            document.getElementById('chartEndDate').value = endDate.toISOString().split('T')[0];
-            document.getElementById('chartStartDate').value = startDate.toISOString().split('T')[0];
-            
-            updateChart();
-        }
-
-        function updateChart() {
-            const startDate = document.getElementById('chartStartDate').value;
-            const endDate = document.getElementById('chartEndDate').value;
-            
-            const filteredTransactions = dataStore.getChartData(currentChartMode, startDate, endDate);
-
-            // Group by date
-            const dailyData = {};
-            filteredTransactions.forEach(t => {
-                const date = currentChartMode === 'transferred' ? t.transferDate : t.date;
-                if (!dailyData[date]) {
-                    dailyData[date] = 0;
+        async function deleteTransaction(id) {
+            if (confirm('Yakin ingin menolak transaksi ini?')) {
+                try {
+                    await dataStore.deleteTransaction(id);
+                    showAlert('❌ Transaksi berhasil ditolak!', 'warning');
+                    updateOwnerDashboard();
+                } catch (error) {
+                    showAlert('❌ Error hapus transaksi: ' + error.message, 'danger');
                 }
-                dailyData[date] += t.amount;
-            });
+            }
+        }
 
-            const labels = Object.keys(dailyData).sort();
-            const data = labels.map(date => dailyData[date]);
-
-            const ctx = document.getElementById('incomeChart').getContext('2d');
+        async function processTransferToBank() {
+            const readyTransactions = dataStore.getReadyForTransfer();
             
-            if (incomeChart) {
-                incomeChart.destroy();
+            if (readyTransactions.length === 0) {
+                showAlert('Tidak ada transaksi yang siap untuk ditransfer!', 'warning');
+                return;
             }
 
-            const chartConfig = currentChartMode === 'transferred' ? {
-                label: 'Uang Di Rekening',
-                borderColor: '#059669',
-                backgroundColor: 'rgba(5, 150, 105, 0.1)'
-            } : {
-                label: 'Uang Tervalidasi',
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245, 158, 11, 0.1)'
-            };
-
-            incomeChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels.map(date => new Date(date).toLocaleDateString('id-ID')),
-                    datasets: [{
-                        label: chartConfig.label,
-                        data: data,
-                        borderColor: chartConfig.borderColor,
-                        backgroundColor: chartConfig.backgroundColor,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            labels: {
-                                color: chartConfig.borderColor,
-                                font: {
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
+            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+            
+            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
+            
+            if (confirm(message)) {
+                const spinner = document.getElementById('transferSpinner');
+                if (spinner) spinner.classList.remove('hidden');
+                
+                try {
+                    const transferRecord = await dataStore.transferToBank();
+                    
+                    if (transferRecord) {
+                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
+                        showAlert(successMessage, 'success', 6000);
+                        updateOwnerDashboard();
                     }
+                } catch (error) {
+                    showAlert('❌ Error saat proses transfer: ' + error.message, 'danger');
+                } finally {
+                    if (spinner) spinner.classList.add('hidden');
                 }
-            });
+            }
         }
 
         // Form handling
@@ -1842,6 +1797,16 @@
                 accessCode.focus();
             }
 
+            // Reset code enter key
+            const resetCode = document.getElementById('resetCode');
+            if (resetCode) {
+                resetCode.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        confirmReset();
+                    }
+                });
+            }
+
             // Monitor online/offline status
             window.addEventListener('online', () => {
                 dataStore.testConnection();
@@ -1851,9 +1816,9 @@
                 updateOnlineStatus(false);
             });
 
-            console.log('🧾 LondriPediaCash Perfect System Ready!');
-            console.log('💰 Smart Rp 5M+ Alert System Enabled!');
-            console.log('📊 Dual Dashboard + Flexible Transfer Ready!');
+            dataStore.logger.log('🧾 LondriPediaCash Debug Version Ready!', 'success');
+            dataStore.logger.log('🔧 Troubleshooting tools available', 'info');
+            dataStore.logger.log('📊 Full debug logging enabled', 'info');
         });
     </script>
 </body>
