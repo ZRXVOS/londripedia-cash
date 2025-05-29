@@ -789,38 +789,16 @@
                     this.lastId = 0;
                     this.storageAvailable = false;
                     this.isOnline = false;
-                    this.loadMinimalDemoData();
+                 
                 }
             }
 
-            loadMinimalDemoData() {
-                // Only 2 demo transactions to minimize clutter
-                const today = new Date();
-                const demoAmounts = [1500000, 2200000];
-                
-                for (let i = 0; i < 2; i++) {
-                    const date = new Date(today);
-                    date.setDate(date.getDate() - i);
-                    
-                    const transaction = {
-                        id: ++this.lastId,
-                        timestamp: date.toISOString(),
-                        date: date.toISOString().split('T')[0],
-                        amount: demoAmounts[i],
-                        note: `Demo data ${i + 1}`,
-                        inputBy: 'SPV',
-                        validated: i === 1, // Only second transaction validated
-                        transferred: false,
-                        transferDate: null
-                    };
-                    
-                    this.transactions.push(transaction);
-                }
-                
-                this.save();
-                this.logger.log('Loaded minimal demo data (2 transactions)', 'info');
-            }
-
+           loadMinimalDemoData() {
+    // DEMO DATA DISABLED - Function ini sudah tidak dipakai
+    this.logger.log('Demo data function disabled', 'info');
+    return;
+}
+            
             async testConnection() {
                 this.logger.log('Testing Google Sheets connection...', 'info');
                 
@@ -1320,9 +1298,9 @@
             dataStore.logger.log('🌐 Testing API endpoints...', 'info');
             
             const endpoints = [
-                { name: 'Health Check', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=health_check', method: 'GET' },
-                { name: 'Get All Data', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=get_all_data', method: 'GET' },
-                { name: 'Add Transaction', url: CONFIG.GOOGLE_SHEETS_API_URL, method: 'POST', body: { action: 'add_transaction', amount: 1000, note: 'test' } }
+              { name: 'Health Check', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=health_check', method: 'GET' },
+              { name: 'Get All Data', url: CONFIG.GOOGLE_SHEETS_API_URL + '?action=get_all_data', method: 'GET' }
+           // { name: 'Add Transaction', url: CONFIG.GOOGLE_SHEETS_API_URL, method: 'POST', body: { action: 'add_transaction', amount: 1000, note: 'test' } } // ← COMMENT BARIS INI
             ];
 
             for (const endpoint of endpoints) {
