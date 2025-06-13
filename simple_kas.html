@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kas Sederhana</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label>Username:
+                <input type="text" id="username" required>
+            </label>
+            <br>
+            <label>Password:
+                <input type="password" id="password" required>
+            </label>
+            <br>
+            <button type="submit">Masuk</button>
+        </form>
+        <p id="loginError" style="color:red;"></p>
+    </div>
+
+    <div id="kasirPage" class="hidden">
+        <h2>Halaman Kasir</h2>
+        <form id="transForm">
+            <label>Nominal:
+                <input type="number" id="amount" required>
+            </label>
+            <br>
+            <label>Keterangan:
+                <input type="text" id="note">
+            </label>
+            <br>
+            <button type="submit">Tambah</button>
+        </form>
+        <button id="logoutKasir">Keluar</button>
+        <p id="kasirMsg"></p>
+    </div>
+
+    <div id="ownerPage" class="hidden">
+        <h2>Halaman Pemilik</h2>
+        <ul id="history"></ul>
+        <p id="total"></p>
+        <button id="logoutOwner">Keluar</button>
+    </div>
+
+    <script>
+        const data = [];
+        let total = 0;
+
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const kasirPage = document.getElementById('kasirPage');
+        const ownerPage = document.getElementById('ownerPage');
+        const loginDiv = document.getElementById('login');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'kasir' && password === 'kasir123') {
+                loginDiv.classList.add('hidden');
+                kasirPage.classList.remove('hidden');
+            } else if (username === 'owner' && password === 'owner123') {
+                loginDiv.classList.add('hidden');
+                ownerPage.classList.remove('hidden');
+                renderOwner();
+            } else {
+                loginError.textContent = 'Username atau password salah';
+            }
+        });
+
+        document.getElementById('transForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const note = document.getElementById('note').value;
+            data.push({ amount, note });
+            total += amount;
+            document.getElementById('kasirMsg').textContent = 'Transaksi ditambahkan';
+            document.getElementById('amount').value = '';
+            document.getElementById('note').value = '';
+            renderOwner();
+        });
+        document.getElementById('logoutKasir').addEventListener('click', function() {
+            kasirPage.classList.add('hidden');
+            loginDiv.classList.remove('hidden');
+            loginForm.reset();
+            loginError.textContent = '';
+        });
+
+        function renderOwner() {
+            const ul = document.getElementById('history');
+            ul.innerHTML = '';
+            data.forEach(t => {
+                const li = document.createElement('li');
+                li.textContent = `${t.amount} - ${t.note}`;
+                ul.appendChild(li);
+            });
+            document.getElementById('total').textContent = 'Total: ' + total;
+        }
+        document.getElementById('logoutOwner').addEventListener('click', function() {
+            ownerPage.classList.add('hidden');
+            loginDiv.classList.remove('hidden');
+            loginForm.reset();
+            loginError.textContent = '';
+        });
+    </script>
+</body>
+</html>
