@@ -208,9 +208,15 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .stat-card {
@@ -323,8 +329,68 @@
         }
 
         .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-status {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .outlet-selector {
+            display: flex;
+            gap: 15px;
+            padding: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .outlet-selector label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .outlet-selector label:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .outlet-selector input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .outlet-selector input[type="radio"]:checked + span {
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .outlet-selector label:has(input:checked) {
+            background: #d1fae5;
+            border-color: #059669;
         }
 
         .hidden {
@@ -455,39 +521,117 @@
             .container {
                 padding: 10px;
             }
-            
+
             .header h1 {
-                font-size: 2em;
+                font-size: 1.8em;
             }
-            
-            .btn {
-                width: 100%;
+
+            .header p {
+                font-size: 0.95em;
+            }
+
+            .btn:not(.btn-small) {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+
+            .btn-full {
                 margin-bottom: 10px;
             }
 
             .online-status {
                 top: 10px;
                 right: 10px;
+                font-size: 11px;
+                padding: 6px 12px;
             }
 
             .sync-indicator {
                 bottom: 10px;
                 right: 10px;
+                font-size: 10px;
+                padding: 6px 12px;
             }
 
             .transaction-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
+                padding: 12px;
             }
 
             .transaction-actions {
                 width: 100%;
-                justify-content: flex-end;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .transaction-actions .btn-small {
+                width: 100%;
             }
 
             .reset-form {
                 flex-direction: column;
+            }
+
+            .filter-buttons {
+                gap: 6px;
+            }
+
+            .filter-buttons .btn-small {
+                flex: 1;
+                min-width: 80px;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 1.5em;
+            }
+
+            .validation-item {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .validation-item .transaction-actions {
+                width: 100%;
+            }
+
+            .card {
+                padding: 18px;
+                margin-bottom: 15px;
+            }
+
+            .debug-panel {
+                font-size: 11px;
+                padding: 12px;
+                max-height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .container {
+                padding: 8px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .btn-small {
+                font-size: 11px;
+                padding: 7px 10px;
             }
         }
     </style>
@@ -576,14 +720,14 @@
                 <form id="incomeForm">
                     <div class="form-group">
                         <label>Pilih Outlet</label>
-                        <div style="display: flex; gap: 20px; padding: 10px 0;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <div class="outlet-selector">
+                            <label>
                                 <input type="radio" name="outletSelector" value="LondriPedia" checked onchange="selectedOutlet = this.value">
-                                <span style="font-weight: 600;">🏪 LondriPedia</span>
+                                <span>🏪 LondriPedia</span>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <label>
                                 <input type="radio" name="outletSelector" value="Monyonyo" onchange="selectedOutlet = this.value">
-                                <span style="font-weight: 600;">🏪 Monyonyo</span>
+                                <span>🏪 Monyonyo</span>
                             </label>
                         </div>
                     </div>
@@ -615,15 +759,13 @@
             <!-- Riwayat Input Hari Ini -->
             <div class="card">
                 <h3>📋 Riwayat Input Hari Ini</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-small" onclick="filterKasirHistory('Semua')">Semua Outlet</button>
-                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('LondriPedia')">LondriPedia</button>
-                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('Monyonyo')">Monyonyo</button>
-                    <button class="btn btn-warning btn-small" onclick="forceRefreshFromServer()">
-                        🔄 Refresh
-                    </button>
+                <div class="filter-buttons">
+                    <button class="btn btn-primary btn-small" onclick="filterKasirHistory('Semua')">📊 Semua</button>
+                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('LondriPedia')">🏪 LP</button>
+                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('Monyonyo')">🏪 MY</button>
+                    <button class="btn btn-warning btn-small" onclick="forceRefreshFromServer()">🔄</button>
                 </div>
-                <div id="kasirFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 10px;">
+                <div id="kasirFilterStatus" class="filter-status">
                     Filter: <strong>Semua Outlet</strong>
                 </div>
                 <div id="todayHistory" class="transaction-list">
@@ -645,12 +787,12 @@
             <!-- Status Overview -->
             <div class="card">
                 <h3>📊 Status Overview</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button class="btn btn-primary btn-small" onclick="filterOwnerView('Semua')">Semua Outlet</button>
-                    <button class="btn btn-success btn-small" onclick="filterOwnerView('LondriPedia')">LondriPedia</button>
-                    <button class="btn btn-success btn-small" onclick="filterOwnerView('Monyonyo')">Monyonyo</button>
+                <div class="filter-buttons">
+                    <button class="btn btn-primary btn-small" onclick="filterOwnerView('Semua')">📊 Semua</button>
+                    <button class="btn btn-success btn-small" onclick="filterOwnerView('LondriPedia')">🏪 LondriPedia</button>
+                    <button class="btn btn-success btn-small" onclick="filterOwnerView('Monyonyo')">🏪 Monyonyo</button>
                 </div>
-                <div id="ownerFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 15px;">
+                <div id="ownerFilterStatus" class="filter-status">
                     Filter: <strong>Semua Outlet</strong>
                 </div>
 
@@ -714,9 +856,9 @@
 
             <!-- Validation Section -->
             <div id="validationSection" class="validation-section hidden">
-                <h3 style="margin-bottom: 16px; color: #92400e;">🔴 VALIDASI TRANSAKSI (BELUM DIVALIDASI)</h3>
-                <div id="validationFilterStatus" style="font-size: 0.9em; color: #92400e; margin-bottom: 10px; font-weight: 600;">
-                    Filter: <span id="validationFilterText">Semua Outlet</span>
+                <h3 style="margin-bottom: 10px; color: #92400e;">🔴 Validasi Transaksi</h3>
+                <div id="validationFilterStatus" class="filter-status" style="background: #fffbeb; border: 1px solid #fcd34d;">
+                    Filter: <strong><span id="validationFilterText">Semua Outlet</span></strong>
                 </div>
                 <div id="pendingTransactions">
                     <div style="text-align: center; color: #6c757d; padding: 20px;">
@@ -727,7 +869,7 @@
 
             <!-- Transfer LondriPedia Section -->
             <div id="transferSectionLP" class="validation-section hidden">
-                <h3 style="margin-bottom: 16px; color: #0369a1;">🟡 TRANSFER KE REKENING - LONDRIPEDIA</h3>
+                <h3 style="margin-bottom: 10px; color: #0369a1;">🟡 Transfer - LondriPedia</h3>
                 <div style="margin-bottom: 15px;">
                     <strong>Siap Transfer: </strong>
                     <span id="readyTransferAmountLP" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
@@ -736,15 +878,15 @@
                 <div id="readyTransferListLP" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
                     <!-- Ready to transfer transactions will be loaded here -->
                 </div>
-                <button class="btn btn-success btn-full" onclick="processTransferToBank('LondriPedia')" style="font-size: 1.1em;">
+                <button class="btn btn-success btn-full" onclick="processTransferToBank('LondriPedia')">
                     <span id="transferSpinnerLP" class="loading hidden"></span>
-                    🏦 TRANSFER LONDRIPEDIA KE REKENING
+                    🏦 Transfer ke Rekening
                 </button>
             </div>
 
             <!-- Transfer Monyonyo Section -->
             <div id="transferSectionMY" class="validation-section hidden">
-                <h3 style="margin-bottom: 16px; color: #059669;">🟡 TRANSFER KE REKENING - MONYONYO</h3>
+                <h3 style="margin-bottom: 10px; color: #059669;">🟡 Transfer - Monyonyo</h3>
                 <div style="margin-bottom: 15px;">
                     <strong>Siap Transfer: </strong>
                     <span id="readyTransferAmountMY" style="font-size: 1.2em; font-weight: bold; color: #059669;">Rp 0</span>
@@ -753,19 +895,21 @@
                 <div id="readyTransferListMY" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
                     <!-- Ready to transfer transactions will be loaded here -->
                 </div>
-                <button class="btn btn-success btn-full" onclick="processTransferToBank('Monyonyo')" style="font-size: 1.1em;">
+                <button class="btn btn-success btn-full" onclick="processTransferToBank('Monyonyo')">
                     <span id="transferSpinnerMY" class="loading hidden"></span>
-                    🏦 TRANSFER MONYONYO KE REKENING
+                    🏦 Transfer ke Rekening
                 </button>
             </div>
 
             <!-- All Transactions -->
             <div class="card">
                 <h3>📋 Semua Transaksi</h3>
-                <button class="btn btn-primary" onclick="forceRefreshFromServer()" style="margin-bottom: 15px;">
-                    🔄 Refresh Data dari Server
-                </button>
-                <div id="allTransactionsFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 10px;">
+                <div class="filter-buttons">
+                    <button class="btn btn-primary btn-small" onclick="forceRefreshFromServer()">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+                <div id="allTransactionsFilterStatus" class="filter-status">
                     Filter: <strong><span id="allTransactionsFilterText">Semua Outlet</span></strong>
                 </div>
                 <div id="allTransactions" class="transaction-list">
