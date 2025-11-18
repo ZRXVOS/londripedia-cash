@@ -1994,25 +1994,32 @@
                     return false;
                 }
 
-                this.logger.log(`Deleting transaction ID ${id}`, 'info');
+                const transaction = this.transactions[index];
+                this.logger.log(`Deleting transaction ID ${id} from outlet ${transaction.outlet}`, 'info');
 
-                const deletedTransaction = this.transactions[index];
+                // Remove from array
+                const deletedTransaction = {...transaction}; // Backup for restore if needed
                 this.transactions.splice(index, 1);
                 this.save();
                 this.logger.log(`Transaction ID ${id} deleted locally`, 'success');
 
-                // Sync to Google Sheets
-                const result = await this.syncToGoogleSheets('delete_transaction', { id });
+                // Try to sync to Google Sheets (non-blocking for reject action)
+                try {
+                    const result = await this.syncToGoogleSheets('delete_transaction', {
+                        id,
+                        outlet: transaction.outlet
+                    });
 
-                if (result) {
-                    this.logger.log(`Transaction ID ${id} deletion synced to Google Sheets`, 'success');
-                    return true;
-                } else {
-                    // Restore the transaction if sync failed
-                    this.transactions.splice(index, 0, deletedTransaction);
-                    this.save();
-                    this.logger.log(`Sync failed, restored transaction ID ${id}`, 'error');
-                    throw new Error('Failed to sync deletion to server');
+                    if (result) {
+                        this.logger.log(`Transaction ID ${id} deletion synced to Google Sheets`, 'success');
+                        return true;
+                    } else {
+                        this.logger.log(`⚠️ Transaction ID ${id} deleted locally but sync failed. Manual cleanup may be needed on server.`, 'warning');
+                        return true; // Still return true as local deletion succeeded
+                    }
+                } catch (syncError) {
+                    this.logger.log(`⚠️ Sync error for deletion of transaction ID ${id}: ${syncError.message}. Transaction removed locally.`, 'warning');
+                    return true; // Still return true as local deletion succeeded
                 }
             }
 
@@ -2826,7 +2833,7 @@
             }
 
             currentEditTransactionId = id;
-            document.getElementById('editModalOutlet').textContent = transaction.outlet;
+            document.getElementById('editModalOutlet').textContent = transaction.outlet || 'LondriPedia';
             document.getElementById('editModalOldAmount').textContent = formatCurrency(transaction.amount);
             document.getElementById('editModalOldAmountWords').textContent = numberToWords(transaction.amount) + ' Rupiah';
             document.getElementById('editModalNewAmount').value = '';
@@ -2863,10 +2870,21 @@
             spinner.classList.remove('hidden');
 
             try {
-                await dataStore.editTransactionAmount(currentEditTransactionId, newAmount, editReason);
-                showAlert('✅ Transaksi berhasil diupdate dan divalidasi!', 'success');
-                closeEditModal();
-                updateOwnerDashboard();
+                const success = await dataStore.editTransactionAmount(currentEditTransactionId, newAmount, editReason);
+
+                if (success) {
+                    // Check if sync was successful
+                    const transaction = dataStore.transactions.find(t => t.id === currentEditTransactionId);
+                    if (transaction && transaction.needsSync) {
+                        showAlert('✅ Transaksi berhasil diupdate dan divalidasi!\n\n⚠️ Sync ke Google Sheets akan dicoba ulang otomatis.', 'warning', 6000);
+                    } else {
+                        showAlert('✅ Transaksi berhasil diupdate dan divalidasi!', 'success');
+                    }
+                    closeEditModal();
+                    updateOwnerDashboard();
+                } else {
+                    showAlert('❌ Error: Transaksi tidak ditemukan!', 'danger');
+                }
             } catch (error) {
                 showAlert('❌ Error update transaksi: ' + error.message, 'danger');
             } finally {
@@ -3041,7 +3059,8 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
 
             // Show/hide transfer section (combined for all outlets)
             const transferSection = document.getElementById('transferSection');
-            const totalReadyCount = statsLP.validatedNotTransferredCount + statsMY.validatedNotTransferredCount;
+            // CRITICAL FIX: Use statsAll instead of LP+MY to catch ALL transactions including those with missing outlet
+            const totalReadyCount = statsAll.validatedNotTransferredCount;
 
             if (totalReadyCount > 0) {
                 transferSection.classList.remove('hidden');
@@ -3220,9 +3239,20 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             if (btn) btn.classList.add('loading');
 
             try {
-                await dataStore.validateTransaction(id);
-                showAlert('✅ Transaksi berhasil divalidasi!');
-                updateOwnerDashboard();
+                const success = await dataStore.validateTransaction(id);
+
+                if (success) {
+                    // Check if sync was successful
+                    const transaction = dataStore.transactions.find(t => t.id === id);
+                    if (transaction && transaction.needsSync) {
+                        showAlert('✅ Transaksi berhasil divalidasi!\n\n⚠️ Sync ke Google Sheets akan dicoba ulang otomatis.', 'warning', 5000);
+                    } else {
+                        showAlert('✅ Transaksi berhasil divalidasi!', 'success');
+                    }
+                    updateOwnerDashboard();
+                } else {
+                    showAlert('❌ Error: Transaksi tidak ditemukan!', 'danger');
+                }
             } catch (error) {
                 showAlert('❌ Error validasi: ' + error.message, 'danger');
             } finally {
@@ -3237,9 +3267,14 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 if (btn) btn.classList.add('loading');
 
                 try {
-                    await dataStore.deleteTransaction(id);
-                    showAlert('❌ Transaksi berhasil ditolak!', 'warning');
-                    updateOwnerDashboard();
+                    const success = await dataStore.deleteTransaction(id);
+
+                    if (success) {
+                        showAlert('❌ Transaksi berhasil ditolak!', 'warning');
+                        updateOwnerDashboard();
+                    } else {
+                        showAlert('❌ Error: Transaksi tidak ditemukan!', 'danger');
+                    }
                 } catch (error) {
                     showAlert('❌ Error hapus transaksi: ' + error.message, 'danger');
                 } finally {
