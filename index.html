@@ -1623,18 +1623,28 @@
                     this.storageAvailable = true;
                     this.isOnline = navigator.onLine;
 
-                    // Data migration: Ensure all transactions have outlet field
-                    let migrated = 0;
-                    this.transactions.forEach(t => {
-                        if (!t.outlet) {
-                            t.outlet = 'LondriPedia'; // Default to LondriPedia for old data
-                            migrated++;
-                        }
-                    });
+                    // Data migration: Ensure all transactions have valid outlet field
+                    // Only run if migration hasn't been done yet
+                    const migrationDone = localStorage.getItem('londripedia_outlet_migrated');
+                    if (!migrationDone) {
+                        let migrated = 0;
+                        this.transactions.forEach(t => {
+                            // Only migrate if outlet is truly undefined, null, or empty string
+                            if (t.outlet === undefined || t.outlet === null || t.outlet === '') {
+                                t.outlet = 'LondriPedia'; // Default only if truly missing
+                                migrated++;
+                                this.logger.log(`Migration: Transaction ID ${t.id} outlet set to LondriPedia`, 'info');
+                            }
+                        });
 
-                    if (migrated > 0) {
-                        this.logger.log(`⚠️ Data migration: ${migrated} transactions updated with default outlet`, 'warning');
-                        this.save(); // Save migrated data
+                        if (migrated > 0) {
+                            this.logger.log(`⚠️ Data migration: ${migrated} transactions updated with default outlet`, 'warning');
+                            this.save(); // Save migrated data
+                        }
+
+                        // Mark migration as done so it doesn't run again
+                        localStorage.setItem('londripedia_outlet_migrated', 'true');
+                        this.logger.log('✅ Outlet migration completed and marked', 'success');
                     }
 
                     this.logger.log(`Memuat data lokal: ${this.transactions.length} transaksi`, 'success');
@@ -2030,9 +2040,11 @@
                     return false;
                 }
 
-                this.logger.log(`Editing transaction ID ${id} amount from ${transaction.amount} to ${newAmount}`, 'info');
+                // IMPORTANT: Log and preserve outlet
+                const originalOutlet = transaction.outlet;
+                this.logger.log(`Editing transaction ID ${id} (${originalOutlet}) amount from ${transaction.amount} to ${newAmount}`, 'info');
 
-                // Update transaction locally first
+                // Update transaction locally first - PRESERVE OUTLET!
                 if (!transaction.originalAmount) {
                     transaction.originalAmount = transaction.amount; // Save original amount first time
                 }
@@ -2041,9 +2053,14 @@
                 transaction.editedBy = 'Owner';
                 transaction.editedAt = new Date().toISOString();
                 transaction.validated = true; // Auto-validate after edit
+                // CRITICAL: Ensure outlet is preserved (should already be set, but ensure it's not lost)
+                if (!transaction.outlet) {
+                    transaction.outlet = originalOutlet || 'LondriPedia';
+                    this.logger.log(`⚠️ WARNING: Outlet was missing for transaction ID ${id}, restored to ${transaction.outlet}`, 'warning');
+                }
 
                 this.save();
-                this.logger.log(`Transaction ID ${id} edited locally and validated`, 'success');
+                this.logger.log(`Transaction ID ${id} edited locally and validated (outlet: ${transaction.outlet})`, 'success');
 
                 // Try to sync to Google Sheets (non-blocking)
                 try {
@@ -3190,7 +3207,7 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                         </div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
                         <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
-                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
+                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}${t.editReason ? ' - ' + t.editReason.replace(/"/g, '&quot;') : ''}</div>` : ''}
                     </div>
                     <div class="transaction-status status-validated">
                         🟡 Siap Transfer
