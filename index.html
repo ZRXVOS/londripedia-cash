@@ -3042,25 +3042,58 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 }
 
                 container.innerHTML = pendingTransactions.map(t => `
-                <div class="validation-item">
+                <div class="validation-item" data-transaction-id="${t.id}">
                     <div class="transaction-info">
                         <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
                     </div>
                     <div class="transaction-actions">
-                        <button class="btn btn-success btn-small" onclick="validateTransaction(${t.id})">
+                        <button class="btn btn-success btn-small btn-validate" data-id="${t.id}">
                             ✓ Validasi
                         </button>
-                        <button class="btn btn-warning btn-small" onclick="openEditModal(${t.id})">
+                        <button class="btn btn-warning btn-small btn-edit" data-id="${t.id}">
                             ✏️ Edit Nilai
                         </button>
-                        <button class="btn btn-danger btn-small" onclick="deleteTransaction(${t.id})">
+                        <button class="btn btn-danger btn-small btn-reject" data-id="${t.id}">
                             ❌ Tolak
                         </button>
                     </div>
                 </div>
             `).join('');
+
+                // Add event listeners using event delegation
+                attachValidationEventListeners();
+            });
+        }
+
+        function attachValidationEventListeners() {
+            const container = document.getElementById('pendingTransactions');
+            if (!container) return;
+
+            // Remove old listeners
+            const newContainer = container.cloneNode(true);
+            container.parentNode.replaceChild(newContainer, container);
+
+            // Add new listeners with event delegation
+            newContainer.addEventListener('click', function(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const transactionId = parseInt(target.getAttribute('data-id'));
+                if (!transactionId || isNaN(transactionId)) {
+                    console.error('Invalid transaction ID:', target.getAttribute('data-id'));
+                    showAlert('Error: ID transaksi tidak valid!', 'danger');
+                    return;
+                }
+
+                if (target.classList.contains('btn-validate')) {
+                    validateTransaction(transactionId, target);
+                } else if (target.classList.contains('btn-edit')) {
+                    openEditModal(transactionId);
+                } else if (target.classList.contains('btn-reject')) {
+                    deleteTransaction(transactionId, target);
+                }
             });
         }
 
