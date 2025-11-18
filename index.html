@@ -1670,9 +1670,16 @@
                         this.logger.log('Response data: ' + JSON.stringify(result), 'info');
                         
                         if (result && result.success) {
+                            const wasOffline = !this.isOnline;
                             this.isOnline = true;
                             updateOnlineStatus(true);
                             this.logger.log('✅ Google Sheets connection SUCCESS', 'success');
+
+                            // Auto-retry pending transfers when coming back online
+                            if (wasOffline) {
+                                this.logger.log('🔄 Back online, checking for pending syncs...', 'info');
+                                setTimeout(() => this.retrySyncPendingTransfers(), 2000);
+                            }
                         } else {
                             throw new Error('API returned unsuccessful response');
                         }
@@ -1794,6 +1801,50 @@
                     this.logger.log('❌ Sync from server failed: ' + error.message, 'error');
                     return false;
                 }
+            }
+
+            async retrySyncPendingTransfers() {
+                // Find transfers that need sync
+                const pendingTransfers = this.transferHistory.filter(t => t.needsSync);
+
+                if (pendingTransfers.length === 0) {
+                    this.logger.log('No pending transfers to sync', 'info');
+                    return { success: 0, failed: 0 };
+                }
+
+                this.logger.log(`Retrying sync for ${pendingTransfers.length} pending transfers...`, 'info');
+                let successCount = 0;
+                let failedCount = 0;
+
+                for (const transfer of pendingTransfers) {
+                    try {
+                        const result = await this.syncToGoogleSheets('transfer_all', {
+                            outlet: transfer.outlet,
+                            totalAmount: transfer.total,
+                            count: transfer.count,
+                            transferDate: transfer.date
+                        });
+
+                        if (result) {
+                            transfer.synced = true;
+                            transfer.needsSync = false;
+                            successCount++;
+                            this.logger.log(`✅ Transfer ${transfer.id} synced successfully`, 'success');
+                        } else {
+                            failedCount++;
+                        }
+                    } catch (error) {
+                        failedCount++;
+                        this.logger.log(`❌ Failed to sync transfer ${transfer.id}: ${error.message}`, 'error');
+                    }
+                }
+
+                if (successCount > 0) {
+                    this.save();
+                }
+
+                this.logger.log(`Sync retry complete: ${successCount} success, ${failedCount} failed`, 'info');
+                return { success: successCount, failed: failedCount };
             }
 
             async resetAllData() {
@@ -2027,26 +2078,34 @@
                 this.save();
                 this.logger.log(`Transfer processed locally: ${formatCurrency(transferRecord.total)}`, 'success');
 
-                // Sync to Google Sheets
-                const result = await this.syncToGoogleSheets('transfer_all', { outlet: outlet || 'Semua' });
-                
-                if (result) {
-                    this.logger.log('Transfer synced to Google Sheets', 'success');
-                    return transferRecord;
-                } else {
-                    // Rollback all changes if sync failed
-                    originalTransactions.forEach(original => {
-                        const transaction = this.transactions.find(t => t.id === original.id);
-                        if (transaction) {
-                            transaction.transferred = original.transferred;
-                            transaction.transferDate = original.transferDate;
-                        }
+                // Try to sync to Google Sheets (non-blocking)
+                try {
+                    const result = await this.syncToGoogleSheets('transfer_all', {
+                        outlet: outlet || 'Semua',
+                        transactionIds: readyTransactions.map(t => t.id),
+                        totalAmount: transferRecord.total,
+                        count: transferRecord.count
                     });
-                    this.transferHistory.shift(); // Remove the transfer record
-                    this.save();
-                    this.logger.log('Sync failed, rolled back transfer', 'error');
-                    throw new Error('Failed to sync transfer to server');
+
+                    if (result) {
+                        this.logger.log('Transfer synced to Google Sheets', 'success');
+                        transferRecord.synced = true;
+                    } else {
+                        this.logger.log('⚠️ Transfer saved locally but sync failed. Will retry on next connection.', 'warning');
+                        transferRecord.synced = false;
+                        transferRecord.needsSync = true;
+                    }
+                } catch (syncError) {
+                    this.logger.log('⚠️ Sync error: ' + syncError.message + '. Transfer saved locally.', 'warning');
+                    transferRecord.synced = false;
+                    transferRecord.needsSync = true;
                 }
+
+                // Save again with sync status
+                this.save();
+
+                // Return transfer record regardless of sync status
+                return transferRecord;
             }
 
             // Get comprehensive stats
@@ -3160,8 +3219,16 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     const transferRecord = await dataStore.transferToBank();
 
                     if (transferRecord) {
-                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
-                        showAlert(successMessage, 'success', 6000);
+                        let successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
+
+                        // Show warning if sync failed
+                        if (transferRecord.needsSync) {
+                            successMessage += '\n\n⚠️ Data tersimpan lokal. Sync ke Google Sheets gagal - akan dicoba ulang otomatis.';
+                            showAlert(successMessage, 'warning', 8000);
+                        } else {
+                            showAlert(successMessage, 'success', 6000);
+                        }
+
                         updateOwnerDashboard();
                     }
                 } catch (error) {
