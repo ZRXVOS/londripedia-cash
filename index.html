@@ -1489,8 +1489,8 @@
                 <!-- END TAB RIWAYAT -->
             </div>
 
-            <!-- RESET SECTION -->
-            <div class="reset-section">
+            <!-- RESET SECTION (OWNER ONLY) -->
+            <div id="resetSectionContainer" class="reset-section" style="display: none !important;">
                 <h3 style="color: #dc2626; text-align: center; margin-bottom: 15px;">🗑️ RESET DATA (HATI-HATI!)</h3>
                 <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <p style="color: #dc2626; font-weight: bold; text-align: center; margin-bottom: 10px;">
@@ -2989,6 +2989,13 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
         }
 
         function logout() {
+            // CRITICAL: Hide Reset section when logging out
+            const resetSection = document.getElementById('resetSectionContainer');
+            if (resetSection) {
+                resetSection.style.display = 'none';
+                resetSection.setAttribute('style', 'display: none !important;');
+            }
+
             showScreen('loginSection');
         }
 
@@ -2997,7 +3004,14 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
             updateTime();
             loadTodayHistory();
-            
+
+            // CRITICAL: Ensure Reset section is hidden for Kasir
+            const resetSection = document.getElementById('resetSectionContainer');
+            if (resetSection) {
+                resetSection.style.display = 'none';
+                resetSection.setAttribute('style', 'display: none !important;');
+            }
+
             // Update time every second
             setInterval(updateTime, 1000);
             dataStore.logger.log('Kasir screen initialized', 'success');
@@ -3037,6 +3051,15 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
         // Owner Screen functions
         function initOwnerScreen() {
             updateOwnerDashboard();
+
+            // CRITICAL: Explicitly show Reset section for Owner only
+            const resetSection = document.getElementById('resetSectionContainer');
+            if (resetSection) {
+                resetSection.style.display = 'block';
+                resetSection.style.removeProperty('display'); // Remove inline !important
+                resetSection.setAttribute('style', ''); // Clear all inline styles
+            }
+
             dataStore.logger.log('Owner screen initialized', 'success');
         }
 
@@ -3362,6 +3385,13 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             document.getElementById('kasirSection').classList.add('hidden');
             document.getElementById('ownerSection').classList.add('hidden');
             document.getElementById('troubleshootSection').classList.add('hidden');
+
+            // CRITICAL: Ensure Reset section is ALWAYS hidden on page load
+            const resetSection = document.getElementById('resetSectionContainer');
+            if (resetSection) {
+                resetSection.style.display = 'none';
+                resetSection.setAttribute('style', 'display: none !important;');
+            }
 
             const incomeForm = document.getElementById('incomeForm');
             if (incomeForm) {
