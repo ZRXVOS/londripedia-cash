@@ -1622,7 +1622,21 @@
                     this.lastId = parseInt(localStorage.getItem('londripedia_last_id') || '0');
                     this.storageAvailable = true;
                     this.isOnline = navigator.onLine;
-                    
+
+                    // Data migration: Ensure all transactions have outlet field
+                    let migrated = 0;
+                    this.transactions.forEach(t => {
+                        if (!t.outlet) {
+                            t.outlet = 'LondriPedia'; // Default to LondriPedia for old data
+                            migrated++;
+                        }
+                    });
+
+                    if (migrated > 0) {
+                        this.logger.log(`⚠️ Data migration: ${migrated} transactions updated with default outlet`, 'warning');
+                        this.save(); // Save migrated data
+                    }
+
                     this.logger.log(`Memuat data lokal: ${this.transactions.length} transaksi`, 'success');
                     
                     // Load minimal demo data only if completely empty
@@ -1936,27 +1950,41 @@
                     this.logger.log(`Transaction ID ${id} not found`, 'error');
                     return false;
                 }
-                
-                this.logger.log(`Validating transaction ID ${id}`, 'info');
-                
+
+                this.logger.log(`Validating transaction ID ${id} for outlet ${transaction.outlet}`, 'info');
+
                 // Save locally first
                 transaction.validated = true;
                 this.save();
                 this.logger.log(`Transaction ID ${id} validated locally`, 'success');
-                
-                // Sync to Google Sheets
-                const result = await this.syncToGoogleSheets('validate_transaction', { id });
-                
-                if (result) {
-                    this.logger.log(`Transaction ID ${id} validation synced to Google Sheets`, 'success');
-                    return true;
-                } else {
-                    // Revert local change if sync failed
-                    transaction.validated = false;
-                    this.save();
-                    this.logger.log(`Sync failed, reverted validation for transaction ID ${id}`, 'error');
-                    throw new Error('Failed to sync validation to server');
+
+                // Try to sync to Google Sheets (non-blocking)
+                try {
+                    const result = await this.syncToGoogleSheets('validate_transaction', {
+                        id,
+                        outlet: transaction.outlet, // IMPORTANT: Send outlet info
+                        amount: transaction.amount
+                    });
+
+                    if (result) {
+                        this.logger.log(`Transaction ID ${id} validation synced to Google Sheets`, 'success');
+                        transaction.synced = true;
+                    } else {
+                        this.logger.log(`⚠️ Transaction ID ${id} validated locally but sync failed. Will retry on next connection.`, 'warning');
+                        transaction.synced = false;
+                        transaction.needsSync = true;
+                    }
+                } catch (syncError) {
+                    this.logger.log(`⚠️ Sync error for transaction ID ${id}: ${syncError.message}. Validation saved locally.`, 'warning');
+                    transaction.synced = false;
+                    transaction.needsSync = true;
                 }
+
+                // Save again with sync status
+                this.save();
+
+                // Return true regardless of sync status (validation succeeded locally)
+                return true;
             }
 
             async deleteTransaction(id) {
@@ -1997,14 +2025,7 @@
 
                 this.logger.log(`Editing transaction ID ${id} amount from ${transaction.amount} to ${newAmount}`, 'info');
 
-                // Backup for rollback
-                const oldAmount = transaction.amount;
-                const oldOriginalAmount = transaction.originalAmount;
-                const oldEditReason = transaction.editReason;
-                const oldEditedBy = transaction.editedBy;
-                const oldEditedAt = transaction.editedAt;
-
-                // Update transaction locally
+                // Update transaction locally first
                 if (!transaction.originalAmount) {
                     transaction.originalAmount = transaction.amount; // Save original amount first time
                 }
@@ -2015,30 +2036,38 @@
                 transaction.validated = true; // Auto-validate after edit
 
                 this.save();
-                this.logger.log(`Transaction ID ${id} edited locally`, 'success');
+                this.logger.log(`Transaction ID ${id} edited locally and validated`, 'success');
 
-                // Sync to Google Sheets
-                const result = await this.syncToGoogleSheets('edit_transaction', {
-                    id,
-                    newAmount,
-                    editReason
-                });
+                // Try to sync to Google Sheets (non-blocking)
+                try {
+                    const result = await this.syncToGoogleSheets('edit_transaction', {
+                        id,
+                        outlet: transaction.outlet, // IMPORTANT: Send outlet info
+                        newAmount,
+                        originalAmount: transaction.originalAmount,
+                        editReason,
+                        validated: true
+                    });
 
-                if (result) {
-                    this.logger.log(`Transaction ID ${id} edit synced to Google Sheets`, 'success');
-                    return true;
-                } else {
-                    // Rollback if sync failed
-                    transaction.amount = oldAmount;
-                    transaction.originalAmount = oldOriginalAmount;
-                    transaction.editReason = oldEditReason;
-                    transaction.editedBy = oldEditedBy;
-                    transaction.editedAt = oldEditedAt;
-                    transaction.validated = false;
-                    this.save();
-                    this.logger.log(`Sync failed, rolled back edit for transaction ID ${id}`, 'error');
-                    throw new Error('Failed to sync edit to server');
+                    if (result) {
+                        this.logger.log(`Transaction ID ${id} edit synced to Google Sheets`, 'success');
+                        transaction.synced = true;
+                    } else {
+                        this.logger.log(`⚠️ Transaction ID ${id} edited locally but sync failed. Will retry on next connection.`, 'warning');
+                        transaction.synced = false;
+                        transaction.needsSync = true;
+                    }
+                } catch (syncError) {
+                    this.logger.log(`⚠️ Sync error for transaction ID ${id}: ${syncError.message}. Edit saved locally.`, 'warning');
+                    transaction.synced = false;
+                    transaction.needsSync = true;
                 }
+
+                // Save again with sync status
+                this.save();
+
+                // Return true regardless of sync status (edit succeeded locally)
+                return true;
             }
 
             async transferToBank(outlet = null) {
@@ -2958,9 +2987,9 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
-                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet || 'LondriPedia'}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-date">${new Date(t.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})} - ${t.note || 'Tanpa catatan'}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
                     </div>
                     <div class="transaction-status ${!t.validated ? 'status-pending' : t.transferred ? 'status-transferred' : 'status-validated'}">
                         ${!t.validated ? '🔴 Belum Valid' : t.transferred ? '🟢 Di Rekening' : '🟡 Belum Transfer'}
@@ -3044,7 +3073,7 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 container.innerHTML = pendingTransactions.map(t => `
                 <div class="validation-item" data-transaction-id="${t.id}">
                     <div class="transaction-info">
-                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet || 'LondriPedia'}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
                         <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
                     </div>
@@ -3132,21 +3161,23 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
-            container.innerHTML = sortedTransactions.map(t => `
+            container.innerHTML = sortedTransactions.map(t => {
+                const outletName = t.outlet || 'LondriPedia';
+                return `
                 <div class="transaction-item validated">
                     <div class="transaction-info">
-                        <div style="font-weight: 600; color: ${t.outlet === 'LondriPedia' ? '#0369a1' : '#059669'}; font-size: 0.85em; margin-bottom: 4px;">
-                            🏪 ${t.outlet}
+                        <div style="font-weight: 600; color: ${outletName === 'LondriPedia' ? '#0369a1' : '#059669'}; font-size: 0.85em; margin-bottom: 4px;">
+                            🏪 ${outletName}
                         </div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
                         ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
                     </div>
                     <div class="transaction-status status-validated">
                         🟡 Siap Transfer
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             });
         }
 
@@ -3169,10 +3200,10 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
-                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet || 'LondriPedia'}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)} - ${t.editReason}</div>` : ''}
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${(t.note || 'Tanpa catatan').replace(/"/g, '&quot;')}</div>
+                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)} - ${(t.editReason || '').replace(/"/g, '&quot;')}</div>` : ''}
                         ${t.transferDate ? `<div style="font-size: 0.8em; color: #059669;">Transfer: ${new Date(t.transferDate).toLocaleDateString('id-ID')}</div>` : ''}
                     </div>
                     <div class="transaction-status ${!t.validated ? 'status-pending' : t.transferred ? 'status-transferred' : 'status-validated'}">
