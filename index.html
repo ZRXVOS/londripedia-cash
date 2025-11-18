@@ -2314,12 +2314,12 @@
                 screen.classList.add('hidden');
             });
             document.getElementById(screenId).classList.remove('hidden');
-            
+
             // Show troubleshoot section for owner
             if (screenId === 'ownerSection') {
                 document.getElementById('troubleshootSection').classList.remove('hidden');
             }
-            
+
             currentView = screenId.replace('Section', '');
         }
 
@@ -3357,6 +3357,12 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
 
         // Form handling
         document.addEventListener('DOMContentLoaded', function() {
+            // Ensure correct initial screen visibility (defensive safeguard)
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('kasirSection').classList.add('hidden');
+            document.getElementById('ownerSection').classList.add('hidden');
+            document.getElementById('troubleshootSection').classList.add('hidden');
+
             const incomeForm = document.getElementById('incomeForm');
             if (incomeForm) {
                 incomeForm.addEventListener('submit', async function(e) {
