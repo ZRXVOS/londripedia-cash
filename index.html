@@ -517,6 +517,106 @@
             50% { opacity: 0.5; }
         }
 
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Skeleton Loader Styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skeleton-line {
+            height: 16px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-line.title {
+            width: 40%;
+            height: 20px;
+        }
+
+        .skeleton-line.amount {
+            width: 60%;
+            height: 24px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-line.date {
+            width: 80%;
+        }
+
+        .skeleton-status {
+            width: 120px;
+            height: 32px;
+            border-radius: 16px;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            gap: 15px;
+        }
+
+        .loading-overlay .loading {
+            width: 50px;
+            height: 50px;
+            border-width: 5px;
+        }
+
+        .loading-overlay-text {
+            font-size: 1.1em;
+            color: #4299e1;
+            font-weight: 600;
+        }
+
+        /* Button loading state */
+        .btn.loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -867,37 +967,37 @@
                 </div>
             </div>
 
-            <!-- Transfer LondriPedia Section -->
-            <div id="transferSectionLP" class="validation-section hidden">
-                <h3 style="margin-bottom: 10px; color: #0369a1;">🟡 Transfer - LondriPedia</h3>
-                <div style="margin-bottom: 15px;">
-                    <strong>Siap Transfer: </strong>
-                    <span id="readyTransferAmountLP" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
-                    (<span id="readyTransferCountLP">0</span> transaksi)
-                </div>
-                <div id="readyTransferListLP" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
-                    <!-- Ready to transfer transactions will be loaded here -->
-                </div>
-                <button class="btn btn-success btn-full" onclick="processTransferToBank('LondriPedia')">
-                    <span id="transferSpinnerLP" class="loading hidden"></span>
-                    🏦 Transfer ke Rekening
-                </button>
-            </div>
+            <!-- Transfer Management Section (Combined) -->
+            <div id="transferSection" class="validation-section hidden">
+                <h3 style="margin-bottom: 10px; color: #059669;">🟡 Transfer ke Rekening</h3>
 
-            <!-- Transfer Monyonyo Section -->
-            <div id="transferSectionMY" class="validation-section hidden">
-                <h3 style="margin-bottom: 10px; color: #059669;">🟡 Transfer - Monyonyo</h3>
-                <div style="margin-bottom: 15px;">
-                    <strong>Siap Transfer: </strong>
-                    <span id="readyTransferAmountMY" style="font-size: 1.2em; font-weight: bold; color: #059669;">Rp 0</span>
-                    (<span id="readyTransferCountMY">0</span> transaksi)
+                <!-- Summary per Outlet -->
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #86efac;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div>
+                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">🏪 LondriPedia</div>
+                            <div style="font-weight: 700; color: #059669;" id="transferSummaryLP">Rp 0 (0 transaksi)</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">🏪 Monyonyo</div>
+                            <div style="font-weight: 700; color: #059669;" id="transferSummaryMY">Rp 0 (0 transaksi)</div>
+                        </div>
+                        <div style="border-left: 2px solid #059669; padding-left: 12px;">
+                            <div style="font-size: 0.85em; color: #6b7280; margin-bottom: 4px;">💰 TOTAL</div>
+                            <div style="font-weight: 700; color: #059669; font-size: 1.1em;" id="transferSummaryTotal">Rp 0 (0 transaksi)</div>
+                        </div>
+                    </div>
                 </div>
-                <div id="readyTransferListMY" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
+
+                <!-- Transaction List -->
+                <div id="readyTransferList" class="transaction-list" style="max-height: 300px; margin-bottom: 15px;">
                     <!-- Ready to transfer transactions will be loaded here -->
                 </div>
-                <button class="btn btn-success btn-full" onclick="processTransferToBank('Monyonyo')">
-                    <span id="transferSpinnerMY" class="loading hidden"></span>
-                    🏦 Transfer ke Rekening
+
+                <!-- Transfer Button -->
+                <button class="btn btn-success btn-full" onclick="processTransferToBank()" style="font-size: 1.05em;">
+                    <span id="transferSpinner" class="loading hidden"></span>
+                    🏦 TRANSFER SEMUA KE REKENING
                 </button>
             </div>
 
@@ -1573,6 +1673,45 @@
             return 'Angka terlalu besar';
         }
 
+        function showSkeletonLoader(container, count = 3) {
+            const skeletons = Array(count).fill(0).map(() => `
+                <div class="skeleton-item">
+                    <div style="flex: 1;">
+                        <div class="skeleton skeleton-line title"></div>
+                        <div class="skeleton skeleton-line amount"></div>
+                        <div class="skeleton skeleton-line date"></div>
+                    </div>
+                    <div class="skeleton skeleton-status"></div>
+                </div>
+            `).join('');
+            container.innerHTML = skeletons;
+        }
+
+        // Helper to defer rendering for better performance
+        function deferRender(callback) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(callback);
+            });
+        }
+
+        function showLoadingOverlay(text = 'Loading...') {
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+            overlay.id = 'loadingOverlay';
+            overlay.innerHTML = `
+                <div class="loading"></div>
+                <div class="loading-overlay-text">${text}</div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+
         function updateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('id-ID', {
@@ -1648,8 +1787,14 @@
 
         // Troubleshooting Functions
         async function testGoogleSheetsConnection() {
+            showLoadingOverlay('🔗 Menguji koneksi Google Sheets...');
             dataStore.logger.log('🔗 Manual connection test started...', 'info');
-            await dataStore.testConnection();
+            try {
+                await dataStore.testConnection();
+                showAlert(dataStore.isOnline ? '✅ Koneksi berhasil!' : '❌ Koneksi gagal!', dataStore.isOnline ? 'success' : 'danger');
+            } finally {
+                hideLoadingOverlay();
+            }
         }
 
         async function testAPIEndpoints() {
@@ -1756,19 +1901,26 @@
         }
 
         async function forceRefreshFromServer() {
+            // Show loading overlay
+            showLoadingOverlay('🔄 Memuat data dari server...');
             dataStore.logger.log('🔄 Force refresh from server...', 'info');
-            const success = await dataStore.syncFromGoogleSheets();
-            
-            if (success) {
-                // Update all views
-                if (currentView === 'kasir') {
-                    loadTodayHistory();
-                } else if (currentView === 'owner') {
-                    updateOwnerDashboard();
+
+            try {
+                const success = await dataStore.syncFromGoogleSheets();
+
+                if (success) {
+                    // Update all views
+                    if (currentView === 'kasir') {
+                        loadTodayHistory();
+                    } else if (currentView === 'owner') {
+                        updateOwnerDashboard();
+                    }
+                    showAlert('✅ Data berhasil di-refresh dari server!', 'success');
+                } else {
+                    showAlert('❌ Gagal refresh data dari server. Periksa debug log untuk detail.', 'danger');
                 }
-                showAlert('✅ Data berhasil di-refresh dari server!', 'success');
-            } else {
-                showAlert('❌ Gagal refresh data dari server. Periksa debug log untuk detail.', 'danger');
+            } finally {
+                hideLoadingOverlay();
             }
         }
 
@@ -1947,15 +2099,21 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
 
         function loadTodayHistory() {
             const container = document.getElementById('todayHistory');
-            const outlet = kasirFilterOutlet === 'Semua' ? null : kasirFilterOutlet;
-            const transactions = dataStore.getTodayTransactions(outlet);
 
-            if (transactions.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada input hari ini</div>';
-                return;
-            }
+            // Show skeleton loader first
+            showSkeletonLoader(container, 3);
 
-            container.innerHTML = transactions.map(t => `
+            // Use deferRender for smooth performance
+            deferRender(() => {
+                const outlet = kasirFilterOutlet === 'Semua' ? null : kasirFilterOutlet;
+                const transactions = dataStore.getTodayTransactions(outlet);
+
+                if (transactions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada input hari ini</div>';
+                    return;
+                }
+
+                container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
                         <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
@@ -1967,6 +2125,7 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     </div>
                 </div>
             `).join('');
+            });
         }
 
         // Owner Screen functions
@@ -2009,30 +2168,15 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                 validationSection.classList.add('hidden');
             }
 
-            // Show/hide transfer sections per outlet
-            const transferSectionLP = document.getElementById('transferSectionLP');
-            const transferSectionMY = document.getElementById('transferSectionMY');
+            // Show/hide transfer section (combined for all outlets)
+            const transferSection = document.getElementById('transferSection');
+            const totalReadyCount = statsLP.validatedNotTransferredCount + statsMY.validatedNotTransferredCount;
 
-            if (currentOutletFilter === 'Semua' || currentOutletFilter === 'LondriPedia') {
-                if (statsLP.validatedNotTransferredCount > 0) {
-                    transferSectionLP.classList.remove('hidden');
-                    loadReadyForTransfer('LondriPedia');
-                } else {
-                    transferSectionLP.classList.add('hidden');
-                }
+            if (totalReadyCount > 0) {
+                transferSection.classList.remove('hidden');
+                loadReadyForTransfer();
             } else {
-                transferSectionLP.classList.add('hidden');
-            }
-
-            if (currentOutletFilter === 'Semua' || currentOutletFilter === 'Monyonyo') {
-                if (statsMY.validatedNotTransferredCount > 0) {
-                    transferSectionMY.classList.remove('hidden');
-                    loadReadyForTransfer('Monyonyo');
-                } else {
-                    transferSectionMY.classList.add('hidden');
-                }
-            } else {
-                transferSectionMY.classList.add('hidden');
+                transferSection.classList.add('hidden');
             }
 
             // Load all transactions
@@ -2041,15 +2185,21 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
 
         function loadPendingValidation() {
             const container = document.getElementById('pendingTransactions');
-            const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
-            const pendingTransactions = dataStore.getPendingValidation(outlet);
 
-            if (pendingTransactions.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang perlu divalidasi</div>';
-                return;
-            }
+            // Show skeleton loader first
+            showSkeletonLoader(container, 2);
 
-            container.innerHTML = pendingTransactions.map(t => `
+            // Use deferRender for smooth performance
+            deferRender(() => {
+                const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
+                const pendingTransactions = dataStore.getPendingValidation(outlet);
+
+                if (pendingTransactions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang perlu divalidasi</div>';
+                    return;
+                }
+
+                container.innerHTML = pendingTransactions.map(t => `
                 <div class="validation-item">
                     <div class="transaction-info">
                         <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
@@ -2069,73 +2219,79 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     </div>
                 </div>
             `).join('');
+            });
         }
 
-        function loadReadyForTransfer(outlet) {
-            if (outlet === 'LondriPedia') {
-                const container = document.getElementById('readyTransferListLP');
-                const readyTransactions = dataStore.getReadyForTransfer('LondriPedia');
+        function loadReadyForTransfer() {
+            const container = document.getElementById('readyTransferList');
 
-                const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
-                document.getElementById('readyTransferAmountLP').textContent = formatCurrency(totalAmount);
-                document.getElementById('readyTransferCountLP').textContent = readyTransactions.length;
+            // Show skeleton loader first
+            showSkeletonLoader(container, 3);
 
-                if (readyTransactions.length === 0) {
+            // Use deferRender for smooth performance
+            deferRender(() => {
+                // Get all ready transactions (combined from all outlets)
+                const readyTransactionsAll = dataStore.getReadyForTransfer();
+                const readyTransactionsLP = dataStore.getReadyForTransfer('LondriPedia');
+                const readyTransactionsMY = dataStore.getReadyForTransfer('Monyonyo');
+
+                // Update summary per outlet
+                const totalLP = readyTransactionsLP.reduce((sum, t) => sum + t.amount, 0);
+                const totalMY = readyTransactionsMY.reduce((sum, t) => sum + t.amount, 0);
+                const totalAll = readyTransactionsAll.reduce((sum, t) => sum + t.amount, 0);
+
+                document.getElementById('transferSummaryLP').textContent = `${formatCurrency(totalLP)} (${readyTransactionsLP.length} transaksi)`;
+                document.getElementById('transferSummaryMY').textContent = `${formatCurrency(totalMY)} (${readyTransactionsMY.length} transaksi)`;
+                document.getElementById('transferSummaryTotal').textContent = `${formatCurrency(totalAll)} (${readyTransactionsAll.length} transaksi)`;
+
+                if (readyTransactionsAll.length === 0) {
                     container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
                     return;
                 }
 
-                container.innerHTML = readyTransactions.reverse().map(t => `
-                    <div class="transaction-item validated">
-                        <div class="transaction-info">
-                            <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                            <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                            ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
-                        </div>
-                        <div class="transaction-status status-validated">
-                            🟡 Siap Transfer
-                        </div>
-                    </div>
-                `).join('');
-            } else if (outlet === 'Monyonyo') {
-                const container = document.getElementById('readyTransferListMY');
-                const readyTransactions = dataStore.getReadyForTransfer('Monyonyo');
-
-                const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
-                document.getElementById('readyTransferAmountMY').textContent = formatCurrency(totalAmount);
-                document.getElementById('readyTransferCountMY').textContent = readyTransactions.length;
-
-                if (readyTransactions.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
-                    return;
+                // Sort by outlet and timestamp
+                const sortedTransactions = [...readyTransactionsAll].sort((a, b) => {
+                if (a.outlet !== b.outlet) {
+                    return a.outlet.localeCompare(b.outlet);
                 }
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
 
-                container.innerHTML = readyTransactions.reverse().map(t => `
-                    <div class="transaction-item validated">
-                        <div class="transaction-info">
-                            <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                            <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
-                            ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
+            container.innerHTML = sortedTransactions.map(t => `
+                <div class="transaction-item validated">
+                    <div class="transaction-info">
+                        <div style="font-weight: 600; color: ${t.outlet === 'LondriPedia' ? '#0369a1' : '#059669'}; font-size: 0.85em; margin-bottom: 4px;">
+                            🏪 ${t.outlet}
                         </div>
-                        <div class="transaction-status status-validated">
-                            🟡 Siap Transfer
-                        </div>
+                        <div class="transaction-amount">${formatCurrency(t.amount)}</div>
+                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
                     </div>
-                `).join('');
-            }
+                    <div class="transaction-status status-validated">
+                        🟡 Siap Transfer
+                    </div>
+                </div>
+            `).join('');
+            });
         }
 
         function loadAllTransactions() {
             const container = document.getElementById('allTransactions');
-            const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
-            const transactions = dataStore.getAllTransactions(outlet);
 
-            if (transactions.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transaksi</div>';
-                return;
-            }
+            // Show skeleton loader first
+            showSkeletonLoader(container, 5);
 
-            container.innerHTML = transactions.map(t => `
+            // Use deferRender for smooth performance
+            deferRender(() => {
+                const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
+                const transactions = dataStore.getAllTransactions(outlet);
+
+                if (transactions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transaksi</div>';
+                    return;
+                }
+
+                container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
                         <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
@@ -2149,52 +2305,79 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     </div>
                 </div>
             `).join('');
+            });
         }
 
-        async function validateTransaction(id) {
+        async function validateTransaction(id, buttonElement) {
+            // Add loading state if button provided
+            const btn = buttonElement || event?.target;
+            if (btn) btn.classList.add('loading');
+
             try {
                 await dataStore.validateTransaction(id);
                 showAlert('✅ Transaksi berhasil divalidasi!');
                 updateOwnerDashboard();
             } catch (error) {
                 showAlert('❌ Error validasi: ' + error.message, 'danger');
+            } finally {
+                if (btn) btn.classList.remove('loading');
             }
         }
 
-        async function deleteTransaction(id) {
+        async function deleteTransaction(id, buttonElement) {
             if (confirm('Yakin ingin menolak transaksi ini?')) {
+                // Add loading state if button provided
+                const btn = buttonElement || event?.target;
+                if (btn) btn.classList.add('loading');
+
                 try {
                     await dataStore.deleteTransaction(id);
                     showAlert('❌ Transaksi berhasil ditolak!', 'warning');
                     updateOwnerDashboard();
                 } catch (error) {
                     showAlert('❌ Error hapus transaksi: ' + error.message, 'danger');
+                } finally {
+                    if (btn) btn.classList.remove('loading');
                 }
             }
         }
 
-        async function processTransferToBank(outlet) {
-            const readyTransactions = dataStore.getReadyForTransfer(outlet);
+        async function processTransferToBank() {
+            // Get all ready transactions
+            const readyTransactionsAll = dataStore.getReadyForTransfer();
+            const readyTransactionsLP = dataStore.getReadyForTransfer('LondriPedia');
+            const readyTransactionsMY = dataStore.getReadyForTransfer('Monyonyo');
 
-            if (readyTransactions.length === 0) {
+            if (readyTransactionsAll.length === 0) {
                 showAlert('Tidak ada transaksi yang siap untuk ditransfer!', 'warning');
                 return;
             }
 
-            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+            // Calculate totals
+            const totalLP = readyTransactionsLP.reduce((sum, t) => sum + t.amount, 0);
+            const totalMY = readyTransactionsMY.reduce((sum, t) => sum + t.amount, 0);
+            const totalAll = totalLP + totalMY;
 
-            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi dari ${outlet} ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
+            // Build confirmation message with breakdown
+            let message = `Konfirmasi transfer ${readyTransactionsAll.length} transaksi ke rekening bank?\n\n`;
+            if (readyTransactionsLP.length > 0) {
+                message += `🏪 LondriPedia: ${formatCurrency(totalLP)} (${readyTransactionsLP.length} transaksi)\n`;
+            }
+            if (readyTransactionsMY.length > 0) {
+                message += `🏪 Monyonyo: ${formatCurrency(totalMY)} (${readyTransactionsMY.length} transaksi)\n`;
+            }
+            message += `\n💰 TOTAL: ${formatCurrency(totalAll)}`;
 
             if (confirm(message)) {
-                const spinnerId = outlet === 'LondriPedia' ? 'transferSpinnerLP' : 'transferSpinnerMY';
-                const spinner = document.getElementById(spinnerId);
+                const spinner = document.getElementById('transferSpinner');
                 if (spinner) spinner.classList.remove('hidden');
 
                 try {
-                    const transferRecord = await dataStore.transferToBank(outlet);
+                    // Transfer all transactions at once (without outlet filter = all outlets)
+                    const transferRecord = await dataStore.transferToBank();
 
                     if (transferRecord) {
-                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi ${outlet} sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
+                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
                         showAlert(successMessage, 'success', 6000);
                         updateOwnerDashboard();
                     }
