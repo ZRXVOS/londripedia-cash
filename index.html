@@ -572,8 +572,22 @@
             <div class="card">
                 <h2>📝 Input Pemasukan Harian</h2>
                 <div id="alertContainer"></div>
-                
+
                 <form id="incomeForm">
+                    <div class="form-group">
+                        <label>Pilih Outlet</label>
+                        <div style="display: flex; gap: 20px; padding: 10px 0;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="radio" name="outletSelector" value="LondriPedia" checked onchange="selectedOutlet = this.value">
+                                <span style="font-weight: 600;">🏪 LondriPedia</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="radio" name="outletSelector" value="Monyonyo" onchange="selectedOutlet = this.value">
+                                <span style="font-weight: 600;">🏪 Monyonyo</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Tanggal</label>
                         <input type="date" id="incomeDate" required readonly>
@@ -601,9 +615,17 @@
             <!-- Riwayat Input Hari Ini -->
             <div class="card">
                 <h3>📋 Riwayat Input Hari Ini</h3>
-                <button class="btn btn-warning" onclick="forceRefreshFromServer()" style="margin-bottom: 15px;">
-                    🔄 Refresh Data dari Server
-                </button>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-small" onclick="filterKasirHistory('Semua')">Semua Outlet</button>
+                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('LondriPedia')">LondriPedia</button>
+                    <button class="btn btn-success btn-small" onclick="filterKasirHistory('Monyonyo')">Monyonyo</button>
+                    <button class="btn btn-warning btn-small" onclick="forceRefreshFromServer()">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <div id="kasirFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 10px;">
+                    Filter: <strong>Semua Outlet</strong>
+                </div>
                 <div id="todayHistory" class="transaction-list">
                     <div style="text-align: center; color: #6c757d; padding: 20px;">
                         Belum ada input hari ini
@@ -623,18 +645,69 @@
             <!-- Status Overview -->
             <div class="card">
                 <h3>📊 Status Overview</h3>
-                <div class="stats-grid">
-                    <div class="stat-card red">
-                        <div class="stat-value" id="pendingValidationCount">0</div>
-                        <div class="stat-label">Belum Validasi</div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-small" onclick="filterOwnerView('Semua')">Semua Outlet</button>
+                    <button class="btn btn-success btn-small" onclick="filterOwnerView('LondriPedia')">LondriPedia</button>
+                    <button class="btn btn-success btn-small" onclick="filterOwnerView('Monyonyo')">Monyonyo</button>
+                </div>
+                <div id="ownerFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 15px;">
+                    Filter: <strong>Semua Outlet</strong>
+                </div>
+
+                <!-- Stats Semua Outlet -->
+                <div id="statsAllOutlets">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🏢 SEMUA OUTLET</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card red">
+                            <div class="stat-value" id="pendingValidationCount">0</div>
+                            <div class="stat-label">Belum Validasi</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="validatedNotTransferredCount">0</div>
+                            <div class="stat-label">Validasi Belum Transfer</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="transferredCount">0</div>
+                            <div class="stat-label">Sudah Di Rekening</div>
+                        </div>
                     </div>
-                    <div class="stat-card orange">
-                        <div class="stat-value" id="validatedNotTransferredCount">0</div>
-                        <div class="stat-label">Validasi Belum Transfer</div>
+                </div>
+
+                <!-- Stats LondriPedia -->
+                <div id="statsLondriPedia" style="margin-top: 20px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🏪 LONDRIPEDIA</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card red">
+                            <div class="stat-value" id="pendingValidationCountLP">0</div>
+                            <div class="stat-label">Belum Validasi</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="validatedNotTransferredCountLP">0</div>
+                            <div class="stat-label">Validasi Belum Transfer</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="transferredCountLP">0</div>
+                            <div class="stat-label">Sudah Di Rekening</div>
+                        </div>
                     </div>
-                    <div class="stat-card green">
-                        <div class="stat-value" id="transferredCount">0</div>
-                        <div class="stat-label">Sudah Di Rekening</div>
+                </div>
+
+                <!-- Stats Monyonyo -->
+                <div id="statsMonyonyo" style="margin-top: 20px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">🏪 MONYONYO</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card red">
+                            <div class="stat-value" id="pendingValidationCountMY">0</div>
+                            <div class="stat-label">Belum Validasi</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-value" id="validatedNotTransferredCountMY">0</div>
+                            <div class="stat-label">Validasi Belum Transfer</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-value" id="transferredCountMY">0</div>
+                            <div class="stat-label">Sudah Di Rekening</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -642,6 +715,9 @@
             <!-- Validation Section -->
             <div id="validationSection" class="validation-section hidden">
                 <h3 style="margin-bottom: 16px; color: #92400e;">🔴 VALIDASI TRANSAKSI (BELUM DIVALIDASI)</h3>
+                <div id="validationFilterStatus" style="font-size: 0.9em; color: #92400e; margin-bottom: 10px; font-weight: 600;">
+                    Filter: <span id="validationFilterText">Semua Outlet</span>
+                </div>
                 <div id="pendingTransactions">
                     <div style="text-align: center; color: #6c757d; padding: 20px;">
                         Tidak ada transaksi yang perlu divalidasi
@@ -649,20 +725,37 @@
                 </div>
             </div>
 
-            <!-- Transfer Management Section -->
-            <div id="transferSection" class="validation-section hidden">
-                <h3 style="margin-bottom: 16px; color: #92400e;">🟡 MANAJEMEN TRANSFER KE REKENING</h3>
+            <!-- Transfer LondriPedia Section -->
+            <div id="transferSectionLP" class="validation-section hidden">
+                <h3 style="margin-bottom: 16px; color: #0369a1;">🟡 TRANSFER KE REKENING - LONDRIPEDIA</h3>
                 <div style="margin-bottom: 15px;">
                     <strong>Siap Transfer: </strong>
-                    <span id="readyTransferAmount" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
-                    (<span id="readyTransferCount">0</span> transaksi)
+                    <span id="readyTransferAmountLP" style="font-size: 1.2em; font-weight: bold; color: #0369a1;">Rp 0</span>
+                    (<span id="readyTransferCountLP">0</span> transaksi)
                 </div>
-                <div id="readyTransferList" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
+                <div id="readyTransferListLP" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
                     <!-- Ready to transfer transactions will be loaded here -->
                 </div>
-                <button class="btn btn-success btn-full" onclick="processTransferToBank()" style="font-size: 1.1em;">
-                    <span id="transferSpinner" class="loading hidden"></span>
-                    🏦 TRANSFER SEMUA KE REKENING
+                <button class="btn btn-success btn-full" onclick="processTransferToBank('LondriPedia')" style="font-size: 1.1em;">
+                    <span id="transferSpinnerLP" class="loading hidden"></span>
+                    🏦 TRANSFER LONDRIPEDIA KE REKENING
+                </button>
+            </div>
+
+            <!-- Transfer Monyonyo Section -->
+            <div id="transferSectionMY" class="validation-section hidden">
+                <h3 style="margin-bottom: 16px; color: #059669;">🟡 TRANSFER KE REKENING - MONYONYO</h3>
+                <div style="margin-bottom: 15px;">
+                    <strong>Siap Transfer: </strong>
+                    <span id="readyTransferAmountMY" style="font-size: 1.2em; font-weight: bold; color: #059669;">Rp 0</span>
+                    (<span id="readyTransferCountMY">0</span> transaksi)
+                </div>
+                <div id="readyTransferListMY" class="transaction-list" style="max-height: 200px; margin-bottom: 15px;">
+                    <!-- Ready to transfer transactions will be loaded here -->
+                </div>
+                <button class="btn btn-success btn-full" onclick="processTransferToBank('Monyonyo')" style="font-size: 1.1em;">
+                    <span id="transferSpinnerMY" class="loading hidden"></span>
+                    🏦 TRANSFER MONYONYO KE REKENING
                 </button>
             </div>
 
@@ -672,6 +765,9 @@
                 <button class="btn btn-primary" onclick="forceRefreshFromServer()" style="margin-bottom: 15px;">
                     🔄 Refresh Data dari Server
                 </button>
+                <div id="allTransactionsFilterStatus" style="font-size: 0.9em; color: #6b7280; margin-bottom: 10px;">
+                    Filter: <strong><span id="allTransactionsFilterText">Semua Outlet</span></strong>
+                </div>
                 <div id="allTransactions" class="transaction-list">
                     <!-- All transactions will be loaded here -->
                 </div>
@@ -708,14 +804,53 @@
         </div>
     </div>
 
+    <!-- Edit Transaction Modal -->
+    <div id="editModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 500px; margin: 20px;">
+            <h3 style="margin-bottom: 20px;">✏️ Edit Nilai Transaksi</h3>
+
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="margin-bottom: 10px;">
+                    <strong>Outlet:</strong> <span id="editModalOutlet"></span>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Nilai Lama:</strong> <span id="editModalOldAmount" style="font-size: 1.2em; color: #dc2626;"></span>
+                </div>
+                <div style="color: #6b7280; font-size: 0.9em;" id="editModalOldAmountWords"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Nilai Baru</label>
+                <input type="text" id="editModalNewAmount" placeholder="Masukkan nilai baru...">
+                <div class="money-helper" id="editModalHelper"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Alasan Edit</label>
+                <textarea id="editModalReason" rows="3" placeholder="Jelaskan alasan perubahan nilai..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="saveEditTransaction()" style="flex: 1;">
+                    <span id="editModalSpinner" class="loading hidden"></span>
+                    💾 Simpan & Validasi
+                </button>
+                <button class="btn btn-danger" onclick="closeEditModal()" style="flex: 1;">
+                    ❌ Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration - Google Sheets Integration
         const CONFIG = {
             GOOGLE_SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbz6H0I_MRQ8FjxBFuZ4HfZcu5vhWueIXlsbWLeAzkKxjpVCVuWK01tZFy9VIl_GEBkO4w/exec',
             SYNC_ENABLED: true,
             API_TIMEOUT: 15000,
-            VERSION: '2.4-Debug',
-            CRITICAL_AMOUNT_THRESHOLD: 5000000
+            VERSION: '3.0-MultiOutlet',
+            CRITICAL_AMOUNT_THRESHOLD: 5000000,
+            OUTLETS: ['LondriPedia', 'Monyonyo']
         };
 
         // Debug Logging System
@@ -988,14 +1123,19 @@
                 }
             }
 
-            async addTransaction(amount, note) {
+            async addTransaction(amount, note, outlet) {
                 const now = new Date();
                 const transaction = {
                     id: ++this.lastId,
+                    outlet: outlet || 'LondriPedia',
                     timestamp: now.toISOString(),
                     date: now.toISOString().split('T')[0],
                     amount: amount,
+                    originalAmount: null,
                     note: note || '',
+                    editReason: null,
+                    editedBy: null,
+                    editedAt: null,
                     inputBy: 'SPV',
                     validated: false,
                     transferred: false,
@@ -1010,7 +1150,8 @@
                 // Sync to Google Sheets
                 const result = await this.syncToGoogleSheets('add_transaction', {
                     amount: amount,
-                    note: note
+                    note: note,
+                    outlet: outlet || 'LondriPedia'
                 });
                 
                 if (result) {
@@ -1057,17 +1198,17 @@
                     this.logger.log(`Transaction ID ${id} not found for deletion`, 'error');
                     return false;
                 }
-                
+
                 this.logger.log(`Deleting transaction ID ${id}`, 'info');
-                
+
                 const deletedTransaction = this.transactions[index];
                 this.transactions.splice(index, 1);
                 this.save();
                 this.logger.log(`Transaction ID ${id} deleted locally`, 'success');
-                
+
                 // Sync to Google Sheets
                 const result = await this.syncToGoogleSheets('delete_transaction', { id });
-                
+
                 if (result) {
                     this.logger.log(`Transaction ID ${id} deletion synced to Google Sheets`, 'success');
                     return true;
@@ -1080,24 +1221,81 @@
                 }
             }
 
-            async transferToBank() {
-                const readyTransactions = this.transactions.filter(t => t.validated && !t.transferred);
+            async editTransactionAmount(id, newAmount, editReason) {
+                const transaction = this.transactions.find(t => t.id === id);
+                if (!transaction) {
+                    this.logger.log(`Transaction ID ${id} not found`, 'error');
+                    return false;
+                }
+
+                this.logger.log(`Editing transaction ID ${id} amount from ${transaction.amount} to ${newAmount}`, 'info');
+
+                // Backup for rollback
+                const oldAmount = transaction.amount;
+                const oldOriginalAmount = transaction.originalAmount;
+                const oldEditReason = transaction.editReason;
+                const oldEditedBy = transaction.editedBy;
+                const oldEditedAt = transaction.editedAt;
+
+                // Update transaction locally
+                if (!transaction.originalAmount) {
+                    transaction.originalAmount = transaction.amount; // Save original amount first time
+                }
+                transaction.amount = newAmount;
+                transaction.editReason = editReason;
+                transaction.editedBy = 'Owner';
+                transaction.editedAt = new Date().toISOString();
+                transaction.validated = true; // Auto-validate after edit
+
+                this.save();
+                this.logger.log(`Transaction ID ${id} edited locally`, 'success');
+
+                // Sync to Google Sheets
+                const result = await this.syncToGoogleSheets('edit_transaction', {
+                    id,
+                    newAmount,
+                    editReason
+                });
+
+                if (result) {
+                    this.logger.log(`Transaction ID ${id} edit synced to Google Sheets`, 'success');
+                    return true;
+                } else {
+                    // Rollback if sync failed
+                    transaction.amount = oldAmount;
+                    transaction.originalAmount = oldOriginalAmount;
+                    transaction.editReason = oldEditReason;
+                    transaction.editedBy = oldEditedBy;
+                    transaction.editedAt = oldEditedAt;
+                    transaction.validated = false;
+                    this.save();
+                    this.logger.log(`Sync failed, rolled back edit for transaction ID ${id}`, 'error');
+                    throw new Error('Failed to sync edit to server');
+                }
+            }
+
+            async transferToBank(outlet = null) {
+                const readyTransactions = outlet
+                    ? this.transactions.filter(t => t.validated && !t.transferred && t.outlet === outlet)
+                    : this.transactions.filter(t => t.validated && !t.transferred);
+
                 if (readyTransactions.length === 0) {
-                    this.logger.log('No transactions ready for transfer', 'warning');
+                    this.logger.log(`No transactions ready for transfer${outlet ? ' for ' + outlet : ''}`, 'warning');
                     return null;
                 }
 
-                this.logger.log(`Processing transfer for ${readyTransactions.length} transactions`, 'info');
+                this.logger.log(`Processing transfer for ${readyTransactions.length} transactions${outlet ? ' from ' + outlet : ''}`, 'info');
 
                 const now = new Date();
                 const transferRecord = {
                     id: this.transferHistory.length + 1,
+                    outlet: outlet || 'Semua',
                     date: now.toISOString().split('T')[0],
                     count: readyTransactions.length,
                     total: readyTransactions.reduce((sum, t) => sum + t.amount, 0),
                     periodFrom: readyTransactions[readyTransactions.length - 1].date,
                     periodTo: readyTransactions[0].date,
-                    note: 'Transfer ke rekening bank'
+                    note: `Transfer ke rekening bank${outlet ? ' - ' + outlet : ''}`
                 };
 
                 // Backup original state for rollback
@@ -1112,9 +1310,9 @@
                 this.transferHistory.unshift(transferRecord);
                 this.save();
                 this.logger.log(`Transfer processed locally: ${formatCurrency(transferRecord.total)}`, 'success');
-                
+
                 // Sync to Google Sheets
-                const result = await this.syncToGoogleSheets('transfer_all', {});
+                const result = await this.syncToGoogleSheets('transfer_all', { outlet: outlet || 'Semua' });
                 
                 if (result) {
                     this.logger.log('Transfer synced to Google Sheets', 'success');
@@ -1136,43 +1334,59 @@
             }
 
             // Get comprehensive stats
-            getStats() {
+            getStats(outlet = null) {
                 const today = new Date().toISOString().split('T')[0];
-                const validatedTransactions = this.transactions.filter(t => t.validated);
-                const validatedNotTransferred = this.transactions.filter(t => t.validated && !t.transferred);
-                const pendingValidation = this.transactions.filter(t => !t.validated);
-                const transferredTransactions = this.transactions.filter(t => t.transferred);
+                const transactions = outlet
+                    ? this.transactions.filter(t => t.outlet === outlet)
+                    : this.transactions;
+
+                const validatedTransactions = transactions.filter(t => t.validated);
+                const validatedNotTransferred = transactions.filter(t => t.validated && !t.transferred);
+                const pendingValidation = transactions.filter(t => !t.validated);
+                const transferredTransactions = transactions.filter(t => t.transferred);
 
                 return {
                     pendingValidationCount: pendingValidation.length,
                     validatedNotTransferredCount: validatedNotTransferred.length,
                     transferredCount: transferredTransactions.length,
-                    totalTransactions: this.transactions.length,
+                    totalTransactions: transactions.length,
                     pendingTransferAmount: validatedNotTransferred.reduce((sum, t) => sum + t.amount, 0)
                 };
             }
 
-            getTodayTransactions() {
+            getTodayTransactions(outlet = null) {
                 const today = new Date().toISOString().split('T')[0];
-                return this.transactions.filter(t => t.date === today).reverse();
+                const transactions = outlet
+                    ? this.transactions.filter(t => t.date === today && t.outlet === outlet)
+                    : this.transactions.filter(t => t.date === today);
+                return transactions.reverse();
             }
 
-            getPendingValidation() {
-                return this.transactions.filter(t => !t.validated);
+            getPendingValidation(outlet = null) {
+                return outlet
+                    ? this.transactions.filter(t => !t.validated && t.outlet === outlet)
+                    : this.transactions.filter(t => !t.validated);
             }
 
-            getReadyForTransfer() {
-                return this.transactions.filter(t => t.validated && !t.transferred);
+            getReadyForTransfer(outlet = null) {
+                return outlet
+                    ? this.transactions.filter(t => t.validated && !t.transferred && t.outlet === outlet)
+                    : this.transactions.filter(t => t.validated && !t.transferred);
             }
 
-            getAllTransactions() {
-                return [...this.transactions].reverse();
+            getAllTransactions(outlet = null) {
+                const transactions = outlet
+                    ? this.transactions.filter(t => t.outlet === outlet)
+                    : this.transactions;
+                return [...transactions].reverse();
             }
         }
 
         // Global variables
         let dataStore = new DataStore();
         let currentView = 'login';
+        let currentOutletFilter = 'Semua'; // Filter untuk Owner
+        let selectedOutlet = 'LondriPedia'; // Default outlet untuk Kasir
 
         // Utility functions
         function formatCurrency(amount) {
@@ -1418,6 +1632,81 @@
             dataStore.logger.clear();
         }
 
+        // Filter Functions
+        let kasirFilterOutlet = 'Semua';
+        let currentEditTransactionId = null;
+
+        function filterKasirHistory(outlet) {
+            kasirFilterOutlet = outlet;
+            document.getElementById('kasirFilterStatus').innerHTML = `Filter: <strong>${outlet === 'Semua' ? 'Semua Outlet' : outlet}</strong>`;
+            loadTodayHistory();
+        }
+
+        function filterOwnerView(outlet) {
+            currentOutletFilter = outlet;
+            document.getElementById('ownerFilterStatus').innerHTML = `Filter: <strong>${outlet === 'Semua' ? 'Semua Outlet' : outlet}</strong>`;
+            document.getElementById('validationFilterText').textContent = outlet === 'Semua' ? 'Semua Outlet' : outlet;
+            document.getElementById('allTransactionsFilterText').textContent = outlet === 'Semua' ? 'Semua Outlet' : outlet;
+            updateOwnerDashboard();
+        }
+
+        // Edit Transaction Modal Functions
+        function openEditModal(id) {
+            const transaction = dataStore.transactions.find(t => t.id === id);
+            if (!transaction) {
+                showAlert('Transaksi tidak ditemukan!', 'danger');
+                return;
+            }
+
+            currentEditTransactionId = id;
+            document.getElementById('editModalOutlet').textContent = transaction.outlet;
+            document.getElementById('editModalOldAmount').textContent = formatCurrency(transaction.amount);
+            document.getElementById('editModalOldAmountWords').textContent = numberToWords(transaction.amount) + ' Rupiah';
+            document.getElementById('editModalNewAmount').value = '';
+            document.getElementById('editModalReason').value = '';
+            document.getElementById('editModalHelper').textContent = '';
+
+            // Show modal
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            currentEditTransactionId = null;
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        async function saveEditTransaction() {
+            if (!currentEditTransactionId) return;
+
+            const newAmountText = document.getElementById('editModalNewAmount').value.replace(/[^0-9]/g, '');
+            const newAmount = parseInt(newAmountText);
+            const editReason = document.getElementById('editModalReason').value.trim();
+            const spinner = document.getElementById('editModalSpinner');
+
+            if (!newAmount || newAmount <= 0) {
+                showAlert('Nilai baru wajib diisi dengan benar!', 'warning');
+                return;
+            }
+
+            if (!editReason) {
+                showAlert('Alasan edit wajib diisi!', 'warning');
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+
+            try {
+                await dataStore.editTransactionAmount(currentEditTransactionId, newAmount, editReason);
+                showAlert('✅ Transaksi berhasil diupdate dan divalidasi!', 'success');
+                closeEditModal();
+                updateOwnerDashboard();
+            } catch (error) {
+                showAlert('❌ Error update transaksi: ' + error.message, 'danger');
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
         // Reset Functions
         async function confirmReset() {
             const code = document.getElementById('resetCode').value.trim();
@@ -1514,8 +1803,9 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
 
         function loadTodayHistory() {
             const container = document.getElementById('todayHistory');
-            const transactions = dataStore.getTodayTransactions();
-            
+            const outlet = kasirFilterOutlet === 'Semua' ? null : kasirFilterOutlet;
+            const transactions = dataStore.getTodayTransactions(outlet);
+
             if (transactions.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada input hari ini</div>';
                 return;
@@ -1524,6 +1814,7 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
                         <div class="transaction-date">${new Date(t.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})} - ${t.note || 'Tanpa catatan'}</div>
                     </div>
@@ -1541,39 +1832,74 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
         }
 
         function updateOwnerDashboard() {
-            const stats = dataStore.getStats();
-            
-            // Update status overview
-            document.getElementById('pendingValidationCount').textContent = stats.pendingValidationCount;
-            document.getElementById('validatedNotTransferredCount').textContent = stats.validatedNotTransferredCount;
-            document.getElementById('transferredCount').textContent = stats.transferredCount;
-            
+            // Get stats for all outlets
+            const statsAll = dataStore.getStats();
+            const statsLP = dataStore.getStats('LondriPedia');
+            const statsMY = dataStore.getStats('Monyonyo');
+
+            // Update stats - All Outlets
+            document.getElementById('pendingValidationCount').textContent = statsAll.pendingValidationCount;
+            document.getElementById('validatedNotTransferredCount').textContent = statsAll.validatedNotTransferredCount;
+            document.getElementById('transferredCount').textContent = statsAll.transferredCount;
+
+            // Update stats - LondriPedia
+            document.getElementById('pendingValidationCountLP').textContent = statsLP.pendingValidationCount;
+            document.getElementById('validatedNotTransferredCountLP').textContent = statsLP.validatedNotTransferredCount;
+            document.getElementById('transferredCountLP').textContent = statsLP.transferredCount;
+
+            // Update stats - Monyonyo
+            document.getElementById('pendingValidationCountMY').textContent = statsMY.pendingValidationCount;
+            document.getElementById('validatedNotTransferredCountMY').textContent = statsMY.validatedNotTransferredCount;
+            document.getElementById('transferredCountMY').textContent = statsMY.transferredCount;
+
+            // Determine which outlet to show based on filter
+            const filterOutlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
+            const currentStats = filterOutlet ? dataStore.getStats(filterOutlet) : statsAll;
+
             // Show/hide validation section
             const validationSection = document.getElementById('validationSection');
-            if (stats.pendingValidationCount > 0) {
+            if (currentStats.pendingValidationCount > 0) {
                 validationSection.classList.remove('hidden');
                 loadPendingValidation();
             } else {
                 validationSection.classList.add('hidden');
             }
-            
-            // Show/hide transfer section
-            const transferSection = document.getElementById('transferSection');
-            if (stats.validatedNotTransferredCount > 0) {
-                transferSection.classList.remove('hidden');
-                loadReadyForTransfer();
+
+            // Show/hide transfer sections per outlet
+            const transferSectionLP = document.getElementById('transferSectionLP');
+            const transferSectionMY = document.getElementById('transferSectionMY');
+
+            if (currentOutletFilter === 'Semua' || currentOutletFilter === 'LondriPedia') {
+                if (statsLP.validatedNotTransferredCount > 0) {
+                    transferSectionLP.classList.remove('hidden');
+                    loadReadyForTransfer('LondriPedia');
+                } else {
+                    transferSectionLP.classList.add('hidden');
+                }
             } else {
-                transferSection.classList.add('hidden');
+                transferSectionLP.classList.add('hidden');
             }
-            
+
+            if (currentOutletFilter === 'Semua' || currentOutletFilter === 'Monyonyo') {
+                if (statsMY.validatedNotTransferredCount > 0) {
+                    transferSectionMY.classList.remove('hidden');
+                    loadReadyForTransfer('Monyonyo');
+                } else {
+                    transferSectionMY.classList.add('hidden');
+                }
+            } else {
+                transferSectionMY.classList.add('hidden');
+            }
+
             // Load all transactions
             loadAllTransactions();
         }
 
         function loadPendingValidation() {
             const container = document.getElementById('pendingTransactions');
-            const pendingTransactions = dataStore.getPendingValidation();
-            
+            const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
+            const pendingTransactions = dataStore.getPendingValidation(outlet);
+
             if (pendingTransactions.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang perlu divalidasi</div>';
                 return;
@@ -1582,12 +1908,16 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             container.innerHTML = pendingTransactions.map(t => `
                 <div class="validation-item">
                     <div class="transaction-info">
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
                         <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
                     </div>
                     <div class="transaction-actions">
                         <button class="btn btn-success btn-small" onclick="validateTransaction(${t.id})">
                             ✓ Validasi
+                        </button>
+                        <button class="btn btn-warning btn-small" onclick="openEditModal(${t.id})">
+                            ✏️ Edit Nilai
                         </button>
                         <button class="btn btn-danger btn-small" onclick="deleteTransaction(${t.id})">
                             ❌ Tolak
@@ -1597,36 +1927,65 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             `).join('');
         }
 
-        function loadReadyForTransfer() {
-            const container = document.getElementById('readyTransferList');
-            const readyTransactions = dataStore.getReadyForTransfer();
-            
-            const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
-            document.getElementById('readyTransferAmount').textContent = formatCurrency(totalAmount);
-            document.getElementById('readyTransferCount').textContent = readyTransactions.length;
-            
-            if (readyTransactions.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
-                return;
-            }
+        function loadReadyForTransfer(outlet) {
+            if (outlet === 'LondriPedia') {
+                const container = document.getElementById('readyTransferListLP');
+                const readyTransactions = dataStore.getReadyForTransfer('LondriPedia');
 
-            container.innerHTML = readyTransactions.reverse().map(t => `
-                <div class="transaction-item validated">
-                    <div class="transaction-info">
-                        <div class="transaction-amount">${formatCurrency(t.amount)}</div>
-                        <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+                document.getElementById('readyTransferAmountLP').textContent = formatCurrency(totalAmount);
+                document.getElementById('readyTransferCountLP').textContent = readyTransactions.length;
+
+                if (readyTransactions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
+                    return;
+                }
+
+                container.innerHTML = readyTransactions.reverse().map(t => `
+                    <div class="transaction-item validated">
+                        <div class="transaction-info">
+                            <div class="transaction-amount">${formatCurrency(t.amount)}</div>
+                            <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                            ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
+                        </div>
+                        <div class="transaction-status status-validated">
+                            🟡 Siap Transfer
+                        </div>
                     </div>
-                    <div class="transaction-status status-validated">
-                        🟡 Siap Transfer
+                `).join('');
+            } else if (outlet === 'Monyonyo') {
+                const container = document.getElementById('readyTransferListMY');
+                const readyTransactions = dataStore.getReadyForTransfer('Monyonyo');
+
+                const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
+                document.getElementById('readyTransferAmountMY').textContent = formatCurrency(totalAmount);
+                document.getElementById('readyTransferCountMY').textContent = readyTransactions.length;
+
+                if (readyTransactions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Tidak ada transaksi yang siap transfer</div>';
+                    return;
+                }
+
+                container.innerHTML = readyTransactions.reverse().map(t => `
+                    <div class="transaction-item validated">
+                        <div class="transaction-info">
+                            <div class="transaction-amount">${formatCurrency(t.amount)}</div>
+                            <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                            ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)}</div>` : ''}
+                        </div>
+                        <div class="transaction-status status-validated">
+                            🟡 Siap Transfer
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
         function loadAllTransactions() {
             const container = document.getElementById('allTransactions');
-            const transactions = dataStore.getAllTransactions();
-            
+            const outlet = currentOutletFilter === 'Semua' ? null : currentOutletFilter;
+            const transactions = dataStore.getAllTransactions(outlet);
+
             if (transactions.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">Belum ada transaksi</div>';
                 return;
@@ -1635,8 +1994,10 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             container.innerHTML = transactions.map(t => `
                 <div class="transaction-item ${!t.validated ? 'pending' : t.transferred ? 'transferred' : 'validated'}">
                     <div class="transaction-info">
+                        <div style="font-weight: 600; color: #059669; font-size: 0.85em; margin-bottom: 4px;">🏪 ${t.outlet}</div>
                         <div class="transaction-amount">${formatCurrency(t.amount)}</div>
                         <div class="transaction-date">${new Date(t.timestamp).toLocaleString('id-ID')} - ${t.note || 'Tanpa catatan'}</div>
+                        ${t.originalAmount ? `<div style="font-size: 0.8em; color: #f59e0b;">✏️ Diedit dari ${formatCurrency(t.originalAmount)} - ${t.editReason}</div>` : ''}
                         ${t.transferDate ? `<div style="font-size: 0.8em; color: #059669;">Transfer: ${new Date(t.transferDate).toLocaleDateString('id-ID')}</div>` : ''}
                     </div>
                     <div class="transaction-status ${!t.validated ? 'status-pending' : t.transferred ? 'status-transferred' : 'status-validated'}">
@@ -1668,27 +2029,28 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
             }
         }
 
-        async function processTransferToBank() {
-            const readyTransactions = dataStore.getReadyForTransfer();
-            
+        async function processTransferToBank(outlet) {
+            const readyTransactions = dataStore.getReadyForTransfer(outlet);
+
             if (readyTransactions.length === 0) {
                 showAlert('Tidak ada transaksi yang siap untuk ditransfer!', 'warning');
                 return;
             }
 
             const totalAmount = readyTransactions.reduce((sum, t) => sum + t.amount, 0);
-            
-            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
-            
+
+            let message = `Konfirmasi transfer ${readyTransactions.length} transaksi dari ${outlet} ke rekening bank?\n\nTotal: ${formatCurrency(totalAmount)}`;
+
             if (confirm(message)) {
-                const spinner = document.getElementById('transferSpinner');
+                const spinnerId = outlet === 'LondriPedia' ? 'transferSpinnerLP' : 'transferSpinnerMY';
+                const spinner = document.getElementById(spinnerId);
                 if (spinner) spinner.classList.remove('hidden');
-                
+
                 try {
-                    const transferRecord = await dataStore.transferToBank();
-                    
+                    const transferRecord = await dataStore.transferToBank(outlet);
+
                     if (transferRecord) {
-                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
+                        const successMessage = `🏦 Berhasil! ${transferRecord.count} transaksi ${outlet} sebesar ${formatCurrency(transferRecord.total)} telah ditransfer ke rekening bank!`;
                         showAlert(successMessage, 'success', 6000);
                         updateOwnerDashboard();
                     }
@@ -1723,20 +2085,20 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     spinner.classList.remove('hidden');
 
                     try {
-                        const transaction = await dataStore.addTransaction(amount, note);
-                        
+                        const transaction = await dataStore.addTransaction(amount, note, selectedOutlet);
+
                         // Clear form
                         amountInput.value = '';
                         noteInput.value = '';
                         document.getElementById('moneyHelper').textContent = '';
-                        
+
                         // Show success
                         const syncText = dataStore.isOnline ? 'tersimpan ke Google Sheets' : 'tersimpan lokal (akan disinkronkan)';
-                        showAlert(`✅ Data berhasil ${syncText}! Menunggu validasi Owner`);
-                        
+                        showAlert(`✅ Data ${selectedOutlet} berhasil ${syncText}! Menunggu validasi Owner`);
+
                         // Reload today's transactions
                         loadTodayHistory();
-                        
+
                     } catch (error) {
                         showAlert('❌ Error menyimpan data: ' + error.message, 'danger');
                     } finally {
@@ -1753,13 +2115,32 @@ Ketik 'HAPUS SEMUA' untuk melanjutkan:`;
                     if (value) {
                         const amount = parseInt(value);
                         e.target.value = value;
-                        
+
                         // Show formatted currency and words
                         const formatted = formatCurrencyInput(amount);
                         const words = numberToWords(amount);
                         document.getElementById('moneyHelper').textContent = `${formatted} *(${words} Rupiah)*`;
                     } else {
                         document.getElementById('moneyHelper').textContent = '';
+                    }
+                });
+            }
+
+            // Format edit modal input
+            const editModalInput = document.getElementById('editModalNewAmount');
+            if (editModalInput) {
+                editModalInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    if (value) {
+                        const amount = parseInt(value);
+                        e.target.value = value;
+
+                        // Show formatted currency and words
+                        const formatted = formatCurrencyInput(amount);
+                        const words = numberToWords(amount);
+                        document.getElementById('editModalHelper').textContent = `${formatted} *(${words} Rupiah)*`;
+                    } else {
+                        document.getElementById('editModalHelper').textContent = '';
                     }
                 });
             }
