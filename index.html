@@ -617,6 +617,320 @@
             transform: translateY(-50%);
         }
 
+        /* Tabs Navigation */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .tab.active {
+            color: #059669;
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #059669;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Laporan Section */
+        .report-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .report-header h3 {
+            color: #1f2937;
+            font-size: 1.3em;
+        }
+
+        .period-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .period-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .period-btn:hover {
+            border-color: #059669;
+            color: #059669;
+            background: #f0fdf4;
+        }
+
+        .period-btn.active {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .date-range-picker {
+            display: none;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .date-range-picker.active {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .date-range-picker input[type="date"] {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .report-card {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+        }
+
+        .report-card.blue {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-color: #93c5fd;
+        }
+
+        .report-card.yellow {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border-color: #fde047;
+        }
+
+        .report-card-header {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .report-card-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 4px;
+        }
+
+        .report-card.blue .report-card-value {
+            color: #0369a1;
+        }
+
+        .report-card.yellow .report-card-value {
+            color: #ca8a04;
+        }
+
+        .report-card-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .comparison-bar {
+            display: flex;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+            background: #e5e7eb;
+        }
+
+        .comparison-segment {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .comparison-segment.londripedia {
+            background: #0369a1;
+        }
+
+        .comparison-segment.monyonyo {
+            background: #059669;
+        }
+
+        .comparison-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .chart-header h3 {
+            color: #1f2937;
+            font-size: 1.2em;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .legend-item:hover {
+            background: #f3f4f6;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .legend-color.londripedia {
+            background: #0369a1;
+        }
+
+        .legend-color.monyonyo {
+            background: #059669;
+        }
+
+        .legend-item.disabled {
+            opacity: 0.4;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-loading {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .chart-loading.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -713,6 +1027,56 @@
                 font-size: 11px;
                 padding: 12px;
                 max-height: 150px;
+            }
+
+            /* Mobile responsive for tabs and report */
+            .tab {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+
+            .report-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .period-filters {
+                width: 100%;
+            }
+
+            .period-btn {
+                flex: 1;
+                font-size: 11px;
+                padding: 10px 8px;
+            }
+
+            .report-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .report-card {
+                padding: 16px;
+            }
+
+            .report-card-value {
+                font-size: 1.5em;
+            }
+
+            .chart-wrapper {
+                height: 250px;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .chart-legend {
+                justify-content: center;
+            }
+
+            .tab-content {
+                padding: 12px;
             }
         }
 
@@ -884,17 +1248,27 @@
 
         <!-- Owner Section -->
         <div id="ownerSection" class="hidden">
-            <!-- Status Overview -->
-            <div class="card">
-                <h3>📊 Status Overview</h3>
-                <div class="filter-buttons">
-                    <button class="btn btn-primary btn-small" onclick="filterOwnerView('Semua')">📊 Semua</button>
-                    <button class="btn btn-success btn-small" onclick="filterOwnerView('LondriPedia')">🏪 LondriPedia</button>
-                    <button class="btn btn-success btn-small" onclick="filterOwnerView('Monyonyo')">🏪 Monyonyo</button>
+            <!-- Tabs Navigation -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchOwnerTab('dashboard')">📊 Dashboard</button>
+                    <button class="tab" onclick="switchOwnerTab('laporan')">📈 Laporan</button>
+                    <button class="tab" onclick="switchOwnerTab('riwayat')">📋 Riwayat</button>
                 </div>
-                <div id="ownerFilterStatus" class="filter-status">
-                    Filter: <strong>Semua Outlet</strong>
-                </div>
+
+                <!-- TAB 1: DASHBOARD -->
+                <div id="tabDashboard" class="tab-content active">
+                    <!-- Filter Outlet -->
+                    <div style="margin-bottom: 20px;">
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary btn-small" onclick="filterOwnerView('Semua')">📊 Semua</button>
+                            <button class="btn btn-success btn-small" onclick="filterOwnerView('LondriPedia')">🏪 LondriPedia</button>
+                            <button class="btn btn-success btn-small" onclick="filterOwnerView('Monyonyo')">🏪 Monyonyo</button>
+                        </div>
+                        <div id="ownerFilterStatus" class="filter-status">
+                            Filter: <strong>Semua Outlet</strong>
+                        </div>
+                    </div>
 
                 <!-- Stats Semua Outlet -->
                 <div id="statsAllOutlets">
@@ -1000,21 +1374,119 @@
                     🏦 TRANSFER SEMUA KE REKENING
                 </button>
             </div>
+                </div>
+                <!-- END TAB DASHBOARD -->
 
-            <!-- All Transactions -->
-            <div class="card">
-                <h3>📋 Semua Transaksi</h3>
-                <div class="filter-buttons">
-                    <button class="btn btn-primary btn-small" onclick="forceRefreshFromServer()">
-                        🔄 Refresh Data
-                    </button>
+                <!-- TAB 2: LAPORAN -->
+                <div id="tabLaporan" class="tab-content">
+                    <!-- Report Section -->
+                    <div class="report-section">
+                        <div class="report-header">
+                            <h3>📊 Laporan Keuangan</h3>
+                            <div class="period-filters">
+                                <button class="period-btn active" onclick="setReportPeriod('today')">Hari Ini</button>
+                                <button class="period-btn" onclick="setReportPeriod('7days')">7 Hari</button>
+                                <button class="period-btn" onclick="setReportPeriod('30days')">30 Hari</button>
+                                <button class="period-btn" onclick="setReportPeriod('custom')">Custom</button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Date Range Picker -->
+                        <div id="dateRangePicker" class="date-range-picker">
+                            <label style="font-weight: 600; color: #4b5563;">Dari:</label>
+                            <input type="date" id="reportStartDate">
+                            <label style="font-weight: 600; color: #4b5563;">Sampai:</label>
+                            <input type="date" id="reportEndDate">
+                            <button class="btn btn-primary btn-small" onclick="applyCustomDateRange()">Terapkan</button>
+                        </div>
+
+                        <!-- Report Summary Cards -->
+                        <div class="report-summary">
+                            <!-- LondriPedia Card -->
+                            <div class="report-card blue">
+                                <div class="report-card-header">🏪 LondriPedia</div>
+                                <div class="report-card-value" id="reportLPTotal">Rp 0</div>
+                                <div class="report-card-subtitle"><span id="reportLPCount">0</span> transaksi</div>
+                                <div class="report-card-subtitle">Avg: <span id="reportLPAvg">Rp 0</span></div>
+                            </div>
+
+                            <!-- Monyonyo Card -->
+                            <div class="report-card">
+                                <div class="report-card-header">🏪 Monyonyo</div>
+                                <div class="report-card-value" id="reportMYTotal">Rp 0</div>
+                                <div class="report-card-subtitle"><span id="reportMYCount">0</span> transaksi</div>
+                                <div class="report-card-subtitle">Avg: <span id="reportMYAvg">Rp 0</span></div>
+                            </div>
+
+                            <!-- Total Card -->
+                            <div class="report-card yellow">
+                                <div class="report-card-header">💰 TOTAL</div>
+                                <div class="report-card-value" id="reportGrandTotal">Rp 0</div>
+                                <div class="report-card-subtitle"><span id="reportGrandCount">0</span> transaksi</div>
+                                <div class="report-card-subtitle">Avg: <span id="reportGrandAvg">Rp 0</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Bar -->
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px;">Kontribusi Per Outlet:</div>
+                            <div class="comparison-bar">
+                                <div class="comparison-segment londripedia" id="comparisonLP" style="width: 50%;"></div>
+                                <div class="comparison-segment monyonyo" id="comparisonMY" style="width: 50%;"></div>
+                            </div>
+                            <div class="comparison-labels">
+                                <span id="comparisonLPLabel">LondriPedia: 50%</span>
+                                <span id="comparisonMYLabel">Monyonyo: 50%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>📈 Trend Pendapatan</h3>
+                            <div class="chart-legend">
+                                <div class="legend-item" onclick="toggleChartDataset(0)">
+                                    <div class="legend-color londripedia"></div>
+                                    <span>LondriPedia</span>
+                                </div>
+                                <div class="legend-item" onclick="toggleChartDataset(1)">
+                                    <div class="legend-color monyonyo"></div>
+                                    <span>Monyonyo</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <div class="chart-loading" id="chartLoading">
+                                <div class="loading"></div>
+                                <div>Memuat grafik...</div>
+                            </div>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div id="allTransactionsFilterStatus" class="filter-status">
-                    Filter: <strong><span id="allTransactionsFilterText">Semua Outlet</span></strong>
+                <!-- END TAB LAPORAN -->
+
+                <!-- TAB 3: RIWAYAT (All Transactions) -->
+                <div id="tabRiwayat" class="tab-content">
+                    <div class="card" style="padding: 0; margin-bottom: 0;">
+                        <div style="padding: 20px;">
+                            <h3>📋 Semua Transaksi</h3>
+                            <div class="filter-buttons">
+                                <button class="btn btn-primary btn-small" onclick="forceRefreshFromServer()">
+                                    🔄 Refresh Data
+                                </button>
+                            </div>
+                            <div id="allTransactionsFilterStatus" class="filter-status">
+                                Filter: <strong><span id="allTransactionsFilterText">Semua Outlet</span></strong>
+                            </div>
+                            <div id="allTransactions" class="transaction-list">
+                                <!-- All transactions will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="allTransactions" class="transaction-list">
-                    <!-- All transactions will be loaded here -->
-                </div>
+                <!-- END TAB RIWAYAT -->
             </div>
 
             <!-- RESET SECTION -->
@@ -1944,6 +2416,317 @@
             document.getElementById('validationFilterText').textContent = outlet === 'Semua' ? 'Semua Outlet' : outlet;
             document.getElementById('allTransactionsFilterText').textContent = outlet === 'Semua' ? 'Semua Outlet' : outlet;
             updateOwnerDashboard();
+        }
+
+        // Tab Navigation Functions
+        let currentOwnerTab = 'dashboard';
+
+        function switchOwnerTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            const selectedTab = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            currentOwnerTab = tabName;
+
+            // Load data for specific tabs
+            if (tabName === 'laporan') {
+                loadReportData();
+            }
+        }
+
+        // Report Functions
+        let currentReportPeriod = 'today';
+        let reportStartDate = null;
+        let reportEndDate = null;
+        let revenueChart = null;
+
+        function setReportPeriod(period) {
+            currentReportPeriod = period;
+
+            // Update button states
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide custom date picker
+            const datePicker = document.getElementById('dateRangePicker');
+            if (period === 'custom') {
+                datePicker.classList.add('active');
+                // Set default dates
+                const today = new Date().toISOString().split('T')[0];
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                document.getElementById('reportStartDate').value = weekAgo;
+                document.getElementById('reportEndDate').value = today;
+            } else {
+                datePicker.classList.remove('active');
+                loadReportData();
+            }
+        }
+
+        function applyCustomDateRange() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+
+            if (!startDate || !endDate) {
+                showAlert('Pilih tanggal mulai dan akhir!', 'warning');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showAlert('Tanggal mulai harus lebih awal dari tanggal akhir!', 'warning');
+                return;
+            }
+
+            reportStartDate = startDate;
+            reportEndDate = endDate;
+            loadReportData();
+        }
+
+        function getReportDateRange() {
+            const now = new Date();
+            let startDate, endDate;
+
+            if (currentReportPeriod === 'today') {
+                startDate = endDate = new Date().toISOString().split('T')[0];
+            } else if (currentReportPeriod === '7days') {
+                endDate = new Date().toISOString().split('T')[0];
+                startDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            } else if (currentReportPeriod === '30days') {
+                endDate = new Date().toISOString().split('T')[0];
+                startDate = new Date(now.getTime() - 29 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            } else if (currentReportPeriod === 'custom') {
+                startDate = reportStartDate;
+                endDate = reportEndDate;
+            }
+
+            return { startDate, endDate };
+        }
+
+        function loadReportData() {
+            const { startDate, endDate } = getReportDateRange();
+
+            // Filter transactions by date range
+            const filteredTransactions = dataStore.transactions.filter(t => {
+                const tDate = t.date;
+                return tDate >= startDate && tDate <= endDate && t.validated;
+            });
+
+            // Calculate stats per outlet
+            const lpTransactions = filteredTransactions.filter(t => t.outlet === 'LondriPedia');
+            const myTransactions = filteredTransactions.filter(t => t.outlet === 'Monyonyo');
+
+            const lpTotal = lpTransactions.reduce((sum, t) => sum + t.amount, 0);
+            const myTotal = myTransactions.reduce((sum, t) => sum + t.amount, 0);
+            const grandTotal = lpTotal + myTotal;
+
+            const lpCount = lpTransactions.length;
+            const myCount = myTransactions.length;
+            const grandCount = lpCount + myCount;
+
+            const lpAvg = lpCount > 0 ? lpTotal / lpCount : 0;
+            const myAvg = myCount > 0 ? myTotal / myCount : 0;
+            const grandAvg = grandCount > 0 ? grandTotal / grandCount : 0;
+
+            // Update UI
+            document.getElementById('reportLPTotal').textContent = formatCurrency(lpTotal);
+            document.getElementById('reportLPCount').textContent = lpCount;
+            document.getElementById('reportLPAvg').textContent = formatCurrency(lpAvg);
+
+            document.getElementById('reportMYTotal').textContent = formatCurrency(myTotal);
+            document.getElementById('reportMYCount').textContent = myCount;
+            document.getElementById('reportMYAvg').textContent = formatCurrency(myAvg);
+
+            document.getElementById('reportGrandTotal').textContent = formatCurrency(grandTotal);
+            document.getElementById('reportGrandCount').textContent = grandCount;
+            document.getElementById('reportGrandAvg').textContent = formatCurrency(grandAvg);
+
+            // Update comparison bar
+            const lpPercent = grandTotal > 0 ? (lpTotal / grandTotal * 100).toFixed(1) : 50;
+            const myPercent = grandTotal > 0 ? (myTotal / grandTotal * 100).toFixed(1) : 50;
+
+            document.getElementById('comparisonLP').style.width = lpPercent + '%';
+            document.getElementById('comparisonMY').style.width = myPercent + '%';
+            document.getElementById('comparisonLPLabel').textContent = `LondriPedia: ${lpPercent}%`;
+            document.getElementById('comparisonMYLabel').textContent = `Monyonyo: ${myPercent}%`;
+
+            // Update chart
+            updateRevenueChart(startDate, endDate, filteredTransactions);
+        }
+
+        function updateRevenueChart(startDate, endDate, transactions) {
+            const canvas = document.getElementById('revenueChart');
+            const ctx = canvas.getContext('2d');
+
+            // Generate date labels
+            const labels = [];
+            const lpData = [];
+            const myData = [];
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+            for (let i = 0; i < daysDiff; i++) {
+                const currentDate = new Date(start.getTime() + i * 24 * 60 * 60 * 1000);
+                const dateStr = currentDate.toISOString().split('T')[0];
+
+                // Format label based on period length
+                let label;
+                if (daysDiff <= 7) {
+                    label = currentDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                } else if (daysDiff <= 31) {
+                    label = currentDate.getDate();
+                } else {
+                    label = currentDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                }
+
+                labels.push(label);
+
+                // Calculate totals for this date
+                const lpAmount = transactions
+                    .filter(t => t.date === dateStr && t.outlet === 'LondriPedia')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const myAmount = transactions
+                    .filter(t => t.date === dateStr && t.outlet === 'Monyonyo')
+                    .reduce((sum, t) => sum + t.amount, 0);
+
+                lpData.push(lpAmount);
+                myData.push(myAmount);
+            }
+
+            // Destroy existing chart if exists
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
+
+            // Create new chart
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'LondriPedia',
+                            data: lpData,
+                            borderColor: '#0369a1',
+                            backgroundColor: 'rgba(3, 105, 161, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#0369a1',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: 'Monyonyo',
+                            data: myData,
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#059669',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatCurrency(context.parsed.y);
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000) + 'k';
+                                },
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleChartDataset(datasetIndex) {
+            if (!revenueChart) return;
+
+            const dataset = revenueChart.data.datasets[datasetIndex];
+            const legendItem = document.querySelectorAll('.legend-item')[datasetIndex];
+
+            // Toggle visibility
+            dataset.hidden = !dataset.hidden;
+            legendItem.classList.toggle('disabled');
+
+            revenueChart.update();
         }
 
         // Edit Transaction Modal Functions
